@@ -81,7 +81,7 @@ class ProcessInfo():
     # refresh values about hardware
     def refresh_hardware_info(self):
         try:
-            self.cpuUsage = self.process.cpu_percent(interval=1)
+            self.cpuUsage = self.process.cpu_percent(interval=1) / psutil.cpu_count()
             self.diskUsageMB = int(get_size(self.folder)) /int(1000000)
             self.memUsage = float(self.process.memory_info().rss / 1000000)
 
