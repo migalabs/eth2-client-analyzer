@@ -81,7 +81,7 @@ class ProcessInfo():
     # refresh values about hardware
     def refresh_hardware_info(self):
         try:
-            self.cpuUsage = self.process.cpu_percent(interval=1) / psutil.cpu_count()
+            self.cpuUsage = self.process.cpu_percent() / psutil.cpu_count()
             self.diskUsageMB = int(get_size(self.folder)) /int(1000000)
             self.memUsage = float(self.process.memory_info().rss / 1000000)
 
@@ -161,12 +161,17 @@ def main():
     print("Output file is: ", output_file)
     if os.path.isfile(output_file) is True:
         print("Output file exists.")
+    
+    
 
     else:
         print("File does not exist, creating...")
         file = open(output_file, "w")
         file.write("PID,PID_NAME,TIME [month dd hh:mm:ss:ms],DISKUSAGE [MB],CPU[%],MEM[MB]") 
         file.close() 
+
+    sleepInterval = int(sys.argv[4])
+    print("Sleep interval: ", sleepInterval)
 
 
 
@@ -180,7 +185,7 @@ def main():
 
     print("PID |    PID_NAME    |   TIME [month dd hh:mm:ss:ms]  |    DISKUSAGE [MB]    |     CPU[%],    MEM[MB]")
     counter = 0
-    while counter < 5:
+    while True: #counter < 5:
         counter = counter + 1
         try:
            
@@ -191,7 +196,7 @@ def main():
                     add_info_row(single_process_object.export_to_csv())
                 else:
                     process_array.remove(single_process_object)
-
+            time.sleep(sleepInterval)
 
         except Exception as e:
             print(e)
