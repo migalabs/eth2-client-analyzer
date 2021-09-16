@@ -27,6 +27,8 @@ import csv
 import os.path
 import logging
 
+import configparser
+
 
 
 folderStorage = []
@@ -47,6 +49,9 @@ def get_size(input_folder):
                 total_size += os.path.getsize(fp)
 
     return total_size
+
+
+
 
 
 class ProcessInfo():
@@ -111,14 +116,6 @@ class ProcessInfo():
 
 
 
-
-
-
-
-
-
-
-
 """
 
     This function receives information to be writen to disk about a process
@@ -142,9 +139,8 @@ def add_info_row(input_tuple):
         data_to_write = []
 
 
-
 def main():
-    print("Hello World!")
+    
     # main
 
     global folderStorage
@@ -152,30 +148,64 @@ def main():
     global data_to_write
 
 
-    pids = sys.argv[1].split(',')
-    print("Pid: "+str(pids))
-    folderStorage = sys.argv[2].split(',')
+    # prepare to parse config file
+    config_file = os.path.join(os.path.abspath(os.path.dirname(__file__)), str(sys.argv[1]))
+    config_obj = configparser.ConfigParser()
+    
+
+    # check if file exists and read
+    if os.path.isfile(config_file):
+
+        config_obj.read(config_file)
+
+    else:
+        print("Config file not found")
+        exit()
+    
+
+    # start getting configuration values
+    
+    pids = config_obj.get('CUSTOM', 'PIDS')
+    print("PIDs: " + str(pids))
+
+
+    folderStorage = config_obj.get('CUSTOM', 'FOLDERS')
     print("Monitoring storage of: " + str(folderStorage))
 
-    output_file = str(sys.argv[3])
-    print("Output file is: ", output_file)
-    if os.path.isfile(output_file) is True:
-        print("Output file exists.")
-    
-    
 
+    output_file = config_obj.get('CUSTOM', 'OUTPUT_FILE')
+    print("Output file is: ", output_file)
+
+
+
+    # check if output file exists
+    if os.path.isfile(output_file) is True:
+
+        print("Output file exists.")
+
+    # if not exists, create the csv file with the header
     else:
         print("File does not exist, creating...")
         file = open(output_file, "w")
         file.write("PID,PID_NAME,TIME [month dd hh:mm:ss:ms],DISKUSAGE [MB],CPU[%],MEM[MB]") 
         file.close() 
 
-    sleepInterval = int(sys.argv[4])
+
+    # check if amount of pids and folders to monitor are the same
+    if len(pids) != len(folderStorage):
+        print("Not the same amount of PIDs and folders.")
+        print("Please input the same amount of both.")
+        print("Exiting...")
+        exit()
+
+
+    # sleepInterval between each time the script reads the information
+    sleepInterval = config_obj.get('CUSTOM', 'SLEEP_INTERVAL')
     print("Sleep interval: ", sleepInterval)
 
 
 
-    # declare our array of pids to monitor
+    # declare our array of pid processes to monitor
     process_array = []
 
     for single_pid, single_folder in zip(pids, folderStorage):
