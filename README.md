@@ -3,7 +3,9 @@ This repository includes the code and configurations to run and analyze the five
 
 Prysm, Lighthouse, Teku, Nimbus and Lodestar can be set and launched from the different shell scripts. 
 
-The repository also includes a Resource monitor tool, and the prometheus config.yml to read the five clients at the same time.
+The repository also includes a Resource monitor tool to read the five clients at the same time.
+
+Please note that this toll does not reveal any information about the blockchain, node or host. This tool purely provides machine resource information about the conifgured PIDs.
 
 Maintained by [migalabs](http://migalabs.es)
 

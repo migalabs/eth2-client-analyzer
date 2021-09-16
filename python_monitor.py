@@ -76,6 +76,7 @@ folderStorage = []
 # this array will store the tuples to write to disk
 data_to_write = []
 output_file = ""
+number_of_pids = 0
 
 
 BASIC_CONFIG = "BASIC"
@@ -189,7 +190,7 @@ def add_info_row(input_tuple):
     data_to_write.append(input_tuple)
     # print(data_to_write)
 
-    if len(data_to_write) > 4:
+    if len(data_to_write) >= number_of_pids:
         #print("About to CSV" , output_file)
         # Write CSV file
         with open(output_file, "at") as out:
@@ -283,23 +284,30 @@ def main():
     for single_pid, single_folder in zip(pids, folderStorage):
         process_array.append(ProcessInfo(single_pid, single_folder))
 
-
+    number_of_pids = len(process_array)
 
     print("PID |    PID_NAME    |   TIME [month dd hh:mm:ss:ms]  |    DISKUSAGE [MB]    |     CPU[%],    MEM[MB]")
     counter = 0
+
+    # infinite loop
     while True: #counter < 5:
         
         counter = counter + 1
         
         try:
-           
+            # read the metrics for all clients in the array
             for single_process_object in process_array:
                 if single_process_object.exists:
                     single_process_object.refresh_hardware_info()
                     print(str(single_process_object))
+
+                    # add information to the CSV file
                     add_info_row(single_process_object.export_to_csv())
                 else:
+
+                    # if the process does not exist, remove it from the list
                     process_array.remove(single_process_object)
+                    number_of_pids = len(process_array)
 
            
             time.sleep(sleepInterval)
