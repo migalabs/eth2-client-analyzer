@@ -263,8 +263,6 @@ def main():
 
 
     # check if amount of pids and folders to monitor are the same
-    print(len(pids))
-    print(len(folderStorage))
     if len(pids) != len(folderStorage):
         print("Not the same amount of PIDs and folders.")
         print("Please input the same amount of both.")
@@ -274,6 +272,11 @@ def main():
 
     # sleepInterval between each time the script reads the information
     sleepInterval = int(config_obj.get(BASIC_CONFIG, SLEEP_INT_CONFIG))
+    if sleepInterval < 1:
+        print("Sleep Interval is too low.")
+        print("Please input a number equla or higher than 1")
+        exit()
+
     print("Sleep interval: ", sleepInterval)
 
 
