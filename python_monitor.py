@@ -1,5 +1,46 @@
 """
 
+
+BSD 3-Clause License
+
+Copyright (c) 2021, by Barcelona SuperComputing Center
+                Contributors: Tarun Mohandas
+                E-mail:tarun.mohandas@bsc.es
+                URL: https://github.com/migalabs/eth2-client-analyzer
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are met:
+
+* Redistributions of source code must retain the above copyright notice, this
+  list of conditions and the following disclaimer.
+
+* Redistributions in binary form must reproduce the above copyright notice,
+  this list of conditions and the following disclaimer in the documentation
+  and/or other materials provided with the distribution.
+
+* Neither the name of the copyright holder nor the names of its
+  contributors may be used to endorse or promote products derived from
+  this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
+FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+
+"""
+
+
+
+"""
+
 This script outputs information about hardware consumption within a single process and single folder
 It receives two areguments:
 - PID: process to be monitored
@@ -37,6 +78,15 @@ data_to_write = []
 output_file = ""
 
 
+BASIC_CONFIG = "BASIC"
+NAMES_CONFIG = "NAMES"
+OUTPUT_FILE_CONFIG = "OUTPUT_FILE"
+PIDS_CONFIG = "PIDS"
+FOLDERS_CONFIG = "FOLDERS"
+SLEEP_INT_CONFIG = 'SLEEP_INTERVAL'
+
+
+
 #GET SIZE OF ARGUMENT FOLDER
 def get_size(input_folder):
     #print("Size of: ", input_folder)
@@ -55,6 +105,10 @@ def get_size(input_folder):
 
 
 class ProcessInfo():
+
+    nameMap = {
+
+    }
 
     def __init__(self, input_pid, input_folder):
         
@@ -80,7 +134,12 @@ class ProcessInfo():
             return
             
         
-
+    
+    def get_eqvlnt_process_name(self):
+        if self.processName in ProcessInfo.nameMap:
+            return ProcessInfo.nameMap.get(self.processName)
+        
+        return self.processName
 
         
     # refresh values about hardware
@@ -103,7 +162,7 @@ class ProcessInfo():
 
     def __str__(self):
 
-        result = str(self.pid) + ",     " + self.processName + "," + "       " + "," + self.currentTime + "," + \
+        result = str(self.pid) + ",     " + self.get_eqvlnt_process_name() + "," + "       " + "," + self.currentTime + "," + \
             "    " + "," + str(self.diskUsageMB) + "MB           " + \
             "," + str(self.cpuUsage), "      " + "," + str(self.memUsage)
 
@@ -112,7 +171,7 @@ class ProcessInfo():
         
 
     def export_to_csv(self):
-        return self.pid, self.processName, self.currentTime, str(self.diskUsageMB), str(self.cpuUsage), str(self.memUsage)
+        return self.pid, self.get_eqvlnt_process_name(), self.currentTime, str(self.diskUsageMB), str(self.cpuUsage), str(self.memUsage)
 
 
 
@@ -165,19 +224,28 @@ def main():
         exit()
     
 
+    
+
+    for x in config_obj.options(NAMES_CONFIG):
+        ProcessInfo.nameMap[x] = config_obj.get(NAMES_CONFIG, x)
+
+    print(ProcessInfo.nameMap)
+
+
     # start getting configuration values
     
-    pids = [int(x) for x in config_obj.get('CUSTOM', 'PIDS').split(",")]
+    pids = [int(x) for x in config_obj.get(BASIC_CONFIG, PIDS_CONFIG).split(",")]
     print("PIDs: " + str(pids))
 
 
-    folderStorage = config_obj.get('CUSTOM', 'FOLDERS').split(",")
+    folderStorage = config_obj.get(BASIC_CONFIG, FOLDERS_CONFIG).split(",")
     print("Monitoring storage of: " + str(folderStorage))
 
 
-    output_file = config_obj.get('CUSTOM', 'OUTPUT_FILE')
+    output_file = config_obj.get(BASIC_CONFIG, OUTPUT_FILE_CONFIG)
     print("Output file is: ", output_file)
 
+    
 
 
     # check if output file exists
@@ -204,7 +272,7 @@ def main():
 
 
     # sleepInterval between each time the script reads the information
-    sleepInterval = int(config_obj.get('CUSTOM', 'SLEEP_INTERVAL'))
+    sleepInterval = int(config_obj.get(BASIC_CONFIG, SLEEP_INT_CONFIG))
     print("Sleep interval: ", sleepInterval)
 
 
