@@ -10,6 +10,9 @@ Please note that this toll does not reveal any information about the blockchain,
 Maintained by [migalabs](http://migalabs.es)
 
 
+<br></br>
+<br></br>
+
 
 ## Execution command
 
@@ -21,8 +24,47 @@ python3 python_monitor.py config_file.ini
 
 ```
 
+<br></br>
+<br></br>
+
+## Requirements
+
+<br></br>
+
 <strong>This tool has been tested using Python 3.8.10</strong>
 
+
+It is recommended to create a python virtual environment. This can be done through the following command:
+
+```
+python3 -m virtualenv <venv_name>
+```
+
+(This will require you to have "virtualenv" installed)
+
+Virtualenv can be installed via pip.
+
+https://help.dreamhost.com/hc/es/articles/115000695551-Instalar-y-usar-virtualenv-con-Python-3
+
+
+
+In case you also need to install pip:
+https://pip.pypa.io/en/stable/installation/
+
+<br></br>
+
+
+Please install psUtil library using pip command:
+
+```
+pip install psutil
+```
+
+(This will require you to have pip installed)
+
+
+<br></br>
+<br></br>
 
 
 ## Config File
@@ -30,49 +72,51 @@ python3 python_monitor.py config_file.ini
 It is needed to provide a configuration file through the argument of the execution. In this configuration file we may input all needed variables to make the script work for our specific case.
 
 
-Please do not change the section names (the ones in [])
+Please do not change the section names (the ones between [])
 
+<br></br>
 
 ### BASIC
 
 - <strong>PIDS</strong>: We may provide a list of PIDs to monitor.
 
-- <strong>FOLDERS</strong>: We may provide a list of Folders to monitor.
+- <strong>FOLDERS</strong>: We may provide a list of folders to monitor.
 
 
 
-<strong>Please keep in mind that order is important. This way, the first folder in the list will be assigned to the pid in the list. The same would apply to the second, third...
+<strong>Please keep in mind that order is important. This way, the first folder in the list will be assigned to the first PID in the list. The same would apply to the second, third and so on.
 
-It is very important that we provide the same amount of pids and folders, otherwise the script will terminate.</strong>
+It is very important that we provide the same amount of PIDs and folders, otherwise the script will terminate.</strong>
 
 
 
-In case you found that the folders are not being properly monitored, it is recommended to use an absolute path.
+In case you find that the folders are not being properly monitored, it is recommended to use an absolute path.
 
 - <strong>OUTPUT_FILE</strong>: the name of the output file we want the script to write to. If this file does not exist, the script will create automatically.
 
 
-- <strong>SLEEP_INTERVAL</strong> (in seconds): this variable represnts the time betweeneach time the script monitors resources. By default we have applied 30, which would mean that every 30 seconds there is a new line added to the output file for each pid.
+- <strong>SLEEP_INTERVAL</strong> (in seconds): this variable represents the time between each time the script monitors resources. By default we have applied 30, which would mean that every 30 seconds there is a new line added to the output file for each pid.
     - Minimum is 1 second.
 
 With an interval of 30 seconds and 5 clients running at the same time, the script generates an output file of 4MB a week.
 
+<br></br>
 
 ### NAMES
 
 Here we may define the names we want to output for each process.
-Usually the processes associated with a pid have a different name than what we want to output.
+Usually the processes associated with a PID have a different name than what we want to output.
 
-For example, Teku client runs under the "java" process, which menas the process name would be "java".
+For example, Teku client runs under the "java" process, which means the process name would be "java".
 
-Here we may defined the name we want to give in the tool output.
+Here we may define the name we want to give in the tool output.
 
 
 ```
 
 [BASIC]
 
-PIDS = 1,2,3,4,5
+PIDS = 25102,16230,14520,24510,1250
 
 FOLDERS = ~/.eth2/,~/.lighthouse/,~/.local/share/teku/,~/eth2_clients/nimbus/,~/.local/share/lodestar/
 
@@ -87,6 +131,7 @@ java = teku
 node = lodestar
 beacon-chain-v1 = prysm
 nimbus_beacon_node = nimbus
+lighthouse = lighthouse
 
 
 ```

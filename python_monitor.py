@@ -5,7 +5,8 @@ BSD 3-Clause License
 
 Copyright (c) 2021, by Barcelona SuperComputing Center
                 Contributors: Tarun Mohandas
-                E-mail:tarun.mohandas@bsc.es
+                              Leonardo Bautista
+                E-mail: tarun.mohandas@bsc.es
                 URL: https://github.com/migalabs/eth2-client-analyzer
 All rights reserved.
 
@@ -155,8 +156,13 @@ class ProcessInfo():
             self.timestamp = datetime.datetime.now()
             self.currentTime = self.timestamp.strftime("%B %d %H:%M:%S:%f")
             
-        except Exception as e:
+        except psutil.NoSuchProcess as e:
             logging.error(e)
+            self.exists = False
+            return
+        
+        except Exception  as err:
+            logging.error(err)
             return
             
 
@@ -201,6 +207,8 @@ def add_info_row(input_tuple):
         data_to_write = []
 
 
+
+
 def main():
     
     # main
@@ -226,11 +234,9 @@ def main():
     
 
     
-
+    # read the names the user has configured in the configuration file
     for x in config_obj.options(NAMES_CONFIG):
         ProcessInfo.nameMap[x] = config_obj.get(NAMES_CONFIG, x)
-
-    print(ProcessInfo.nameMap)
 
 
     # start getting configuration values
