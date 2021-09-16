@@ -32,9 +32,12 @@ It is needed to provide a configuration file through the argument of the executi
 
 Please do not change the section names (the ones in [])
 
-- PIDS: We may provide a list of PIDs to monitor.
 
-- FOLDERS: We may provide a list of Folders to monitor.
+### BASIC
+
+- <strong>PIDS</strong>: We may provide a list of PIDs to monitor.
+
+- <strong>FOLDERS</strong>: We may provide a list of Folders to monitor.
 
 
 
@@ -46,13 +49,23 @@ It is very important that we provide the same amount of pids and folders, otherw
 
 In case you found that the folders are not being properly monitored, it is recommended to use an absolute path.
 
-- OUTPUT_FILE: the name of the output file we want the script to write to. If this file does not exist, the script will create automatically.
+- <strong>OUTPUT_FILE</strong>: the name of the output file we want the script to write to. If this file does not exist, the script will create automatically.
 
 
-- SLEEP_INTERVAL (in seconds): this variable represnts the time betweeneach time the script monitors resources. By default we have applied 30, which would mean that every 30 seconds there is a new line added to the output file for each pid.
+- <strong>SLEEP_INTERVAL</strong> (in seconds): this variable represnts the time betweeneach time the script monitors resources. By default we have applied 30, which would mean that every 30 seconds there is a new line added to the output file for each pid.
     - Minimum is 1 second.
 
 With an interval of 30 seconds and 5 clients running at the same time, the script generates an output file of 4MB a week.
+
+
+### NAMES
+
+Here we may define the names we want to output for each process.
+Usually the processes associated with a pid have a different name than what we want to output.
+
+For example, Teku client runs under the "java" process, which menas the process name would be "java".
+
+Here we may defined the name we want to give in the tool output.
 
 
 ```
