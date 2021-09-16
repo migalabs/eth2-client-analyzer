@@ -284,6 +284,7 @@ def main():
     # declare our array of pid processes to monitor
     process_array = []
 
+    # loop over both arrays at the same time
     for single_pid, single_folder in zip(pids, folderStorage):
         process_array.append(ProcessInfo(single_pid, single_folder))
 

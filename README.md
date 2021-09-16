@@ -21,6 +21,8 @@ python3 python_monitor.py config_file.ini
 
 ```
 
+<strong>This tool has been tested using Python 3.8.10</strong>
+
 
 
 ## Config File
