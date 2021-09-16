@@ -58,7 +58,7 @@ class ProcessInfo():
 
     def __init__(self, input_pid, input_folder):
         
-        self.pid = input_pid
+        self.pid = int(input_pid)
         try:
             self.process = psutil.Process(int(input_pid))
 
@@ -86,13 +86,15 @@ class ProcessInfo():
     # refresh values about hardware
     def refresh_hardware_info(self):
         try:
+
+            
             self.cpuUsage = self.process.cpu_percent() / psutil.cpu_count()
             self.diskUsageMB = int(get_size(self.folder)) /int(1000000)
             self.memUsage = float(self.process.memory_info().rss / 1000000)
 
             self.timestamp = datetime.datetime.now()
             self.currentTime = self.timestamp.strftime("%B %d %H:%M:%S:%f")
-
+            
         except Exception as e:
             logging.error(e)
             return
@@ -101,7 +103,7 @@ class ProcessInfo():
 
     def __str__(self):
 
-        result = self.pid + ",     " + self.processName + "," + "       " + "," + self.currentTime + "," + \
+        result = str(self.pid) + ",     " + self.processName + "," + "       " + "," + self.currentTime + "," + \
             "    " + "," + str(self.diskUsageMB) + "MB           " + \
             "," + str(self.cpuUsage), "      " + "," + str(self.memUsage)
 
@@ -165,11 +167,11 @@ def main():
 
     # start getting configuration values
     
-    pids = config_obj.get('CUSTOM', 'PIDS')
+    pids = [int(x) for x in config_obj.get('CUSTOM', 'PIDS').split(",")]
     print("PIDs: " + str(pids))
 
 
-    folderStorage = config_obj.get('CUSTOM', 'FOLDERS')
+    folderStorage = config_obj.get('CUSTOM', 'FOLDERS').split(",")
     print("Monitoring storage of: " + str(folderStorage))
 
 
@@ -192,6 +194,8 @@ def main():
 
 
     # check if amount of pids and folders to monitor are the same
+    print(len(pids))
+    print(len(folderStorage))
     if len(pids) != len(folderStorage):
         print("Not the same amount of PIDs and folders.")
         print("Please input the same amount of both.")
@@ -200,7 +204,7 @@ def main():
 
 
     # sleepInterval between each time the script reads the information
-    sleepInterval = config_obj.get('CUSTOM', 'SLEEP_INTERVAL')
+    sleepInterval = int(config_obj.get('CUSTOM', 'SLEEP_INTERVAL'))
     print("Sleep interval: ", sleepInterval)
 
 
@@ -216,7 +220,9 @@ def main():
     print("PID |    PID_NAME    |   TIME [month dd hh:mm:ss:ms]  |    DISKUSAGE [MB]    |     CPU[%],    MEM[MB]")
     counter = 0
     while True: #counter < 5:
+        
         counter = counter + 1
+        
         try:
            
             for single_process_object in process_array:
@@ -226,7 +232,10 @@ def main():
                     add_info_row(single_process_object.export_to_csv())
                 else:
                     process_array.remove(single_process_object)
+
+           
             time.sleep(sleepInterval)
+  
 
         except Exception as e:
             print(e)
