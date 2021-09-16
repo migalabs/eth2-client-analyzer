@@ -11,7 +11,7 @@ Maintained by [migalabs](http://migalabs.es)
 
 
 <br></br>
-<br></br>
+
 
 
 ## Execution command
@@ -28,8 +28,6 @@ python3 python_monitor.py config_file.ini
 <br></br>
 
 ## Requirements
-
-<br></br>
 
 <strong>This tool has been tested using Python 3.8.10</strong>
 

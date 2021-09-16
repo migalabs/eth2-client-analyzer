@@ -148,10 +148,10 @@ class ProcessInfo():
     def refresh_hardware_info(self):
         try:
 
-            
             self.cpuUsage = self.process.cpu_percent() / psutil.cpu_count()
             self.diskUsageMB = int(get_size(self.folder)) /int(1000000)
             self.memUsage = float(self.process.memory_info().rss / 1000000)
+            
 
             self.timestamp = datetime.datetime.now()
             self.currentTime = self.timestamp.strftime("%B %d %H:%M:%S:%f")
