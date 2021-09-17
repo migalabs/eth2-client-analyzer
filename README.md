@@ -38,6 +38,13 @@ It is recommended to create a python virtual environment. This can be done throu
 python3 -m virtualenv <venv_name>
 ```
 
+(This will require you to have "virtualenv" installed)
+
+Virtualenv can be installed via pip.
+
+https://help.dreamhost.com/hc/es/articles/115000695551-Instalar-y-usar-virtualenv-con-Python-3
+
+
 Then use the following to activate the virtual environment (from the same folder):
 
 ```
@@ -51,13 +58,6 @@ Or deactivate it:
 deactivate
 
 ```
-
-(This will require you to have "virtualenv" installed)
-
-Virtualenv can be installed via pip.
-
-https://help.dreamhost.com/hc/es/articles/115000695551-Instalar-y-usar-virtualenv-con-Python-3
-
 
 
 In case you also need to install pip:
