@@ -292,7 +292,14 @@ def main():
 
     # loop over both arrays at the same time
     for single_pid, single_folder in zip(pids, folderStorage):
-        process_array.append(ProcessInfo(single_pid, single_folder))
+        new_process = ProcessInfo(single_pid, single_folder)
+
+        # only add if new process exists, meaning it was properly created
+        if new_process.exists is True:
+            process_array.append(new_process)
+     
+
+        
 
     number_of_pids = len(process_array)
 
@@ -307,8 +314,11 @@ def main():
         try:
             # read the metrics for all clients in the array
             for single_process_object in process_array:
+
+                single_process_object.refresh_hardware_info()
+
                 if single_process_object.exists:
-                    single_process_object.refresh_hardware_info()
+                    
                     print(str(single_process_object))
 
                     # add information to the CSV file
