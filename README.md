@@ -38,6 +38,20 @@ It is recommended to create a python virtual environment. This can be done throu
 python3 -m virtualenv <venv_name>
 ```
 
+Then use the following to activate the virtual environment (from the same folder):
+
+```
+source <venv_name>/bin/activate
+
+```
+
+Or deactivate it:
+
+```
+deactivate
+
+```
+
 (This will require you to have "virtualenv" installed)
 
 Virtualenv can be installed via pip.
