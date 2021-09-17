@@ -70,7 +70,7 @@ pip install psutil
 It is needed to provide a configuration file through the argument of the execution. In this configuration file we may input all needed variables to make the script work for our specific case.
 
 
-Please do not change the section names (the ones between [])
+Please do not change the section names (the ones between [ ])
 
 <br></br>
 
@@ -90,7 +90,7 @@ It is very important that we provide the same amount of PIDs and folders, otherw
 
 In case you find that the folders are not being properly monitored, it is recommended to use an absolute path.
 
-- <strong>OUTPUT_FILE</strong>: the name of the output file we want the script to write to. If this file does not exist, the script will create automatically.
+- <strong>OUTPUT_FILE</strong>: the name of the output file we want the script to write to. If this file does not exist, the script will create it automatically.
 
 
 - <strong>SLEEP_INTERVAL</strong> (in seconds): this variable represents the time between each time the script monitors resources. By default we have applied 30, which would mean that every 30 seconds there is a new line added to the output file for each pid.
