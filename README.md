@@ -5,7 +5,7 @@ Prysm, Lighthouse, Teku, Nimbus and Lodestar can be set and launched from the di
 
 The repository also includes a Resource monitor tool to read the five clients at the same time.
 
-Please note that this toll does not reveal any information about the blockchain, node or host. This tool purely provides machine resource information about the conifgured PIDs.
+Please note that this tool does not reveal any information about the blockchain, node or host. This tool purely provides machine resource information about the conifgured PIDs.
 
 Maintained by [migalabs](http://migalabs.es)
 
