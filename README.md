@@ -24,6 +24,9 @@ python3 python_monitor.py config_file.ini
 
 ```
 
+It is recommended to use a different output_file for each execution.
+Otherwise, data could get mixed and representation may not be the desired.
+
 <br></br>
 <br></br>
 
@@ -147,6 +150,8 @@ lighthouse = lighthouse
 
 
 ```
+
+
 
 
 
