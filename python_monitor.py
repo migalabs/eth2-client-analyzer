@@ -158,7 +158,13 @@ class ProcessInfo():
             
         except psutil.NoSuchProcess as e:
             logging.error(e)
-            self.exists = False
+            self.cpuUsage = 0
+            self.diskUsageMB = 0
+            self.memUsage = float(0)
+            
+
+            self.timestamp = datetime.datetime.now()
+            self.currentTime = self.timestamp.strftime("%B %d %H:%M:%S:%f")
             return
         
         except Exception  as err:
