@@ -18,9 +18,11 @@ It merely needs the Python interpreter to run it.
 The Execution command looks like the following:
 
 ```
-python3 plot_data.py mem data.csv
+python3 plot_data.py <metricType> <data_file>
 ```
-Keep in mind that there are three different keywords we can give as first argument:
+Keep in mind that there are three different keywords we can give as metricType argument:
 - "mem" --> Outputs the Memory consumption plot
 - "cpu" --> Outputs the CPU consumption plot
 - "disk" --> Outputs the Disk Usage plot
+
+For the data_file argument, we may input the file we want to read the data from.
