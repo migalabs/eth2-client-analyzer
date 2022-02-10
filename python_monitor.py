@@ -85,6 +85,7 @@ NAMES_CONFIG = "NAMES"
 OUTPUT_FILE_CONFIG = "OUTPUT_FILE"
 PIDS_CONFIG = "PIDS"
 FOLDERS_CONFIG = "FOLDERS"
+NETWORK_CONFIG = "NETWORK_INTERFACE"
 SLEEP_INT_CONFIG = 'SLEEP_INTERVAL'
 
 
@@ -112,7 +113,7 @@ class ProcessInfo():
 
     }
 
-    def __init__(self, input_pid, input_folder):
+    def __init__(self, input_pid, input_folder, input_net_iface):
         
         self.pid = int(input_pid)
         try:
@@ -125,6 +126,15 @@ class ProcessInfo():
             self.folder = input_folder
 
             self.processName = self.process.name()
+
+            # this represents the interface to monitor
+            # it has nothing to do with the process, but this is the only way we have found to measure the network consumption
+            # it will be the same value for all processes, as it measures the machine traffic, not the process specific traffic
+            self.network_interface = input_net_iface
+
+            networkUsage = psutil.net_io_counters(pernic=True, nowrap=True)
+            self.initial_sent_mb = networkUsage['wlp2s0'][0] / 1000000
+            self.initial_received_mb = networkUsage['wlp2s0'][1] / 1000000
             
             self.refresh_hardware_info()
         
@@ -151,6 +161,11 @@ class ProcessInfo():
             self.cpuUsage = self.process.cpu_percent() / psutil.cpu_count()
             self.diskUsageMB = int(get_size(self.folder)) /int(1000000)
             self.memUsage = float(self.process.memory_info().rss / 1000000)
+
+            networkUsage = psutil.net_io_counters(pernic=True, nowrap=True)
+            
+            self.sent_mb = (networkUsage['wlp2s0'][0] / 1000000) - self.initial_sent_mb
+            self.received_mb = (networkUsage['wlp2s0'][1] / 1000000) - self.initial_received_mb
             
 
             self.timestamp = datetime.datetime.now()
@@ -177,14 +192,14 @@ class ProcessInfo():
 
         result = str(self.pid) + ",     " + self.get_eqvlnt_process_name() + "," + "       " + "," + self.currentTime + "," + \
             "    " + "," + str(self.diskUsageMB) + "MB           " + \
-            "," + str(self.cpuUsage), "      " + "," + str(self.memUsage)
+            "," + str(self.cpuUsage), "      " + "," + str(self.memUsage) + ",     " + str(self.sent_mb)+ "MB  " + "," + str(self.received_mb) + "MB  "
 
         return ''.join(result)
 
         
 
     def export_to_csv(self):
-        return self.pid, self.get_eqvlnt_process_name(), self.currentTime, str(self.diskUsageMB), str(self.cpuUsage), str(self.memUsage)
+        return self.pid, self.get_eqvlnt_process_name(), self.currentTime, str(self.diskUsageMB), str(self.cpuUsage), str(self.memUsage), str(self.sent_mb), str(self.received_mb)
 
 
 
@@ -258,7 +273,8 @@ def main():
     output_file = config_obj.get(BASIC_CONFIG, OUTPUT_FILE_CONFIG)
     print("Output file is: ", output_file)
 
-    
+    network_interface = config_obj.get(BASIC_CONFIG, NETWORK_CONFIG)
+    print("Network interface is: ", network_interface)
 
 
     # check if output file exists
@@ -270,7 +286,7 @@ def main():
     else:
         print("File does not exist, creating...")
         file = open(output_file, "w")
-        file.write("PID,PID_NAME,TIME [month dd hh:mm:ss:ms],DISKUSAGE [MB],CPU[%],MEM[MB]") 
+        file.write("PID,PID_NAME,TIME [month dd hh:mm:ss:ms],DISKUSAGE [MB],CPU[%],MEM[MB],NET_SENT[MB],NET_RECEIVED[MB]") 
         file.close() 
 
 
@@ -298,7 +314,7 @@ def main():
 
     # loop over both arrays at the same time
     for single_pid, single_folder in zip(pids, folderStorage):
-        new_process = ProcessInfo(single_pid, single_folder)
+        new_process = ProcessInfo(single_pid, single_folder, network_interface)
 
         # only add if new process exists, meaning it was properly created
         if new_process.exists is True:
@@ -309,7 +325,7 @@ def main():
 
     number_of_pids = len(process_array)
 
-    print("PID |    PID_NAME    |   TIME [month dd hh:mm:ss:ms]  |    DISKUSAGE [MB]    |     CPU[%],    MEM[MB]")
+    print("PID |    PID_NAME    |   TIME [month dd hh:mm:ss:ms]  |    DISKUSAGE [MB]    |     CPU[%],    MEM[MB],    NET_SENT[MB],    NET_RECEIVED[MB]")
     counter = 0
 
     # infinite loop
