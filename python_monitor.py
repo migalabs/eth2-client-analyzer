@@ -133,8 +133,8 @@ class ProcessInfo():
             self.network_interface = input_net_iface
 
             networkUsage = psutil.net_io_counters(pernic=True, nowrap=True)
-            self.initial_sent_mb = networkUsage['wlp2s0'][0] / 1000000
-            self.initial_received_mb = networkUsage['wlp2s0'][1] / 1000000
+            self.initial_sent_mb = networkUsage[self.network_interface][0] / 1000000
+            self.initial_received_mb = networkUsage[self.network_interface][1] / 1000000
             
             self.refresh_hardware_info()
         
@@ -164,12 +164,12 @@ class ProcessInfo():
 
             networkUsage = psutil.net_io_counters(pernic=True, nowrap=True)
             
-            self.sent_mb = (networkUsage['wlp2s0'][0] / 1000000) - self.initial_sent_mb
-            self.received_mb = (networkUsage['wlp2s0'][1] / 1000000) - self.initial_received_mb
+            self.sent_mb = (networkUsage[self.network_interface][0] / 1000000) - self.initial_sent_mb
+            self.received_mb = (networkUsage[self.network_interface][1] / 1000000) - self.initial_received_mb
             
 
             self.timestamp = datetime.datetime.now()
-            self.currentTime = self.timestamp.strftime("%B %d %H:%M:%S:%f")
+            self.currentTime = self.timestamp.strftime("%d/%m/%Y-%H:%M:%S:%f")
             
         except psutil.NoSuchProcess as e:
             logging.error(e)
