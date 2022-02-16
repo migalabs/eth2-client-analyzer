@@ -70,7 +70,32 @@ import os.path
 import logging
 
 import configparser
+import threading
 
+from flask import Flask
+from flask import jsonify 
+
+process_array = []
+
+app = Flask(__name__)
+
+@app.route("/metrics")
+def main():
+    result = []
+    copy_array = process_array.copy()
+    for single_process in copy_array:
+        process_json = {}
+        process_json['name'] = single_process.processName
+        process_json['cpuUsage'] = single_process.cpuUsage
+        process_json['diskUsage'] = single_process.diskUsageMB
+        process_json['memUsage'] = single_process.memUsage
+
+        process_json['sent_mb'] = single_process.sent_mb
+        process_json['received_mb'] = single_process.received_mb
+        result.append(process_json)
+        print(process_json)
+    
+    return jsonify(result)
 
 
 folderStorage = []
@@ -109,12 +134,12 @@ def get_size(input_folder):
 
 class ProcessInfo():
 
-    nameMap = {
-
-    }
+    nameMap = {}
 
     def __init__(self, input_pid, input_folder, input_net_iface):
         
+
+
         self.pid = int(input_pid)
         try:
             self.process = psutil.Process(int(input_pid))
@@ -200,8 +225,6 @@ class ProcessInfo():
 
     def export_to_csv(self):
         return self.pid, self.get_eqvlnt_process_name(), self.currentTime, str(self.diskUsageMB), str(self.cpuUsage), str(self.memUsage), str(self.sent_mb), str(self.received_mb)
-
-
 
 
 
@@ -310,7 +333,7 @@ def main():
 
 
     # declare our array of pid processes to monitor
-    process_array = []
+    
 
     # loop over both arrays at the same time
     for single_pid, single_folder in zip(pids, folderStorage):
@@ -319,19 +342,11 @@ def main():
         # only add if new process exists, meaning it was properly created
         if new_process.exists is True:
             process_array.append(new_process)
-     
-
-        
-
-    number_of_pids = len(process_array)
 
     print("PID |    PID_NAME    |   TIME [month dd hh:mm:ss:ms]  |    DISKUSAGE [MB]    |     CPU[%],    MEM[MB],    NET_SENT[MB],    NET_RECEIVED[MB]")
-    counter = 0
 
     # infinite loop
     while True: #counter < 5:
-        
-        counter = counter + 1
         
         try:
             # read the metrics for all clients in the array
@@ -346,10 +361,8 @@ def main():
                     # add information to the CSV file
                     add_info_row(single_process_object.export_to_csv())
                 else:
-
                     # if the process does not exist, remove it from the list
                     process_array.remove(single_process_object)
-                    number_of_pids = len(process_array)
 
            
             time.sleep(sleepInterval)
@@ -360,4 +373,5 @@ def main():
 
 
 if __name__ == "__main__":
+    threading.Thread(target=lambda: app.run(host="0.0.0.0", port=5000, debug = False, threaded=True, use_reloader=False), daemon=True).start()
     main()
