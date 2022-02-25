@@ -93,6 +93,7 @@ def main():
         process_json['received_mb'] = single_process.received_mb
         process_json['currentSlot'] = single_process.currentSlot
         process_json['currentPeers'] = single_process.currentPeers
+        process_json['diskUsage_percent'] = psutil.disk_usage('/')[3]
         result.append(process_json)
         print(process_json)
     
