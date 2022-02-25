@@ -51,9 +51,6 @@ This script not only outputs through terminal the results but also writes to dis
 
 
 """
-
-
-
 #! /bin/python
 
 import os
@@ -75,6 +72,8 @@ import threading
 from flask import Flask
 from flask import jsonify 
 
+import requests
+
 process_array = []
 
 app = Flask(__name__)
@@ -92,6 +91,8 @@ def main():
 
         process_json['sent_mb'] = single_process.sent_mb
         process_json['received_mb'] = single_process.received_mb
+        process_json['currentSlot'] = single_process.currentSlot
+        process_json['currentPeers'] = single_process.currentPeers
         result.append(process_json)
         print(process_json)
     
@@ -111,8 +112,10 @@ OUTPUT_FILE_CONFIG = "OUTPUT_FILE"
 PIDS_CONFIG = "PIDS"
 FOLDERS_CONFIG = "FOLDERS"
 NETWORK_CONFIG = "NETWORK_INTERFACE"
+PORT_METRIC_CONFIG = "METRIC_PORT"
+SYNC_METRIC_CONFIG = "SYNC_METRIC_PATH"
+PEERS_METRIC_CONFIG = "PEERS_METRIC_PATH"
 SLEEP_INT_CONFIG = 'SLEEP_INTERVAL'
-
 
 
 #GET SIZE OF ARGUMENT FOLDER
@@ -129,14 +132,28 @@ def get_size(input_folder):
     return total_size
 
 
+def get_sync_process(i_port, i_path):
+    try:
+        response = requests.get("http://localhost:" + i_port + i_path)
+        json_data = response.json()
+        return int(json_data["data"]["head_slot"])
+    except:
+        return int(0)
 
+def get_peer_count(i_port, i_path):
+    try:
+        response = requests.get("http://localhost:" + i_port + i_path)
+        json_data = response.json()
+        return int(json_data["data"]["connected"])
+    except:
+        return int(0)
 
 
 class ProcessInfo():
 
     nameMap = {}
 
-    def __init__(self, input_pid, input_folder, input_net_iface):
+    def __init__(self, input_pid, input_folder, input_net_iface, i_metricPort, i_syncPath, i_peerPath):
         
 
 
@@ -160,6 +177,13 @@ class ProcessInfo():
             networkUsage = psutil.net_io_counters(pernic=True, nowrap=True)
             self.initial_sent_mb = networkUsage[self.network_interface][0] / 1000000
             self.initial_received_mb = networkUsage[self.network_interface][1] / 1000000
+
+            self.metricPort = i_metricPort
+            self.syncPath = i_syncPath
+            self.peerPath = i_peerPath
+
+            self.currentSlot = 0
+            self.currentPeers = 0
             
             self.refresh_hardware_info()
         
@@ -183,6 +207,8 @@ class ProcessInfo():
     def refresh_hardware_info(self):
         try:
 
+            self.timestamp = datetime.datetime.now()
+            self.currentTime = self.timestamp.strftime("%d/%m/%Y-%H:%M:%S:%f")
             self.cpuUsage = self.process.cpu_percent() / psutil.cpu_count()
             self.diskUsageMB = int(get_size(self.folder)) /int(1000000)
             self.memUsage = float(self.process.memory_info().rss / 1000000)
@@ -192,10 +218,9 @@ class ProcessInfo():
             self.sent_mb = (networkUsage[self.network_interface][0] / 1000000) - self.initial_sent_mb
             self.received_mb = (networkUsage[self.network_interface][1] / 1000000) - self.initial_received_mb
             
+            self.currentSlot = get_sync_process(self.metricPort, self.syncPath)
+            self.currentPeers = get_peer_count(self.metricPort, self.peerPath)
 
-            self.timestamp = datetime.datetime.now()
-            self.currentTime = self.timestamp.strftime("%d/%m/%Y-%H:%M:%S:%f")
-            
         except psutil.NoSuchProcess as e:
             logging.error(e)
             self.cpuUsage = 0
@@ -217,14 +242,14 @@ class ProcessInfo():
 
         result = str(self.pid) + ",     " + self.get_eqvlnt_process_name() + "," + "       " + "," + self.currentTime + "," + \
             "    " + "," + str(self.diskUsageMB) + "MB           " + \
-            "," + str(self.cpuUsage), "      " + "," + str(self.memUsage) + ",     " + str(self.sent_mb)+ "MB  " + "," + str(self.received_mb) + "MB  "
+            "," + str(self.cpuUsage), "      " + "," + str(self.memUsage) + ",     " + str(self.sent_mb)+ "MB  " + "," + str(self.received_mb) + "MB  " + str(self.currentSlot) + "     "  + str(self.currentPeers)
 
         return ''.join(result)
 
         
 
     def export_to_csv(self):
-        return self.pid, self.get_eqvlnt_process_name(), self.currentTime, str(self.diskUsageMB), str(self.cpuUsage), str(self.memUsage), str(self.sent_mb), str(self.received_mb)
+        return self.pid, self.get_eqvlnt_process_name(), self.currentTime, str(self.diskUsageMB), str(self.cpuUsage), str(self.memUsage), str(self.sent_mb), str(self.received_mb), str(self.currentSlot), str(self.currentPeers)
 
 
 
@@ -299,6 +324,15 @@ def main():
     network_interface = config_obj.get(BASIC_CONFIG, NETWORK_CONFIG)
     print("Network interface is: ", network_interface)
 
+    metricPort = config_obj.get(BASIC_CONFIG, PORT_METRIC_CONFIG)
+    print("Metrics port is: ", metricPort)
+
+    syncPath = config_obj.get(BASIC_CONFIG, SYNC_METRIC_CONFIG)
+    print("Metrics sync path is: ", syncPath)
+
+    peersPath = config_obj.get(BASIC_CONFIG, PEERS_METRIC_CONFIG)
+    print("Metrics peer path is: ", peersPath)
+
 
     # check if output file exists
     if os.path.isfile(output_file) is True:
@@ -309,7 +343,7 @@ def main():
     else:
         print("File does not exist, creating...")
         file = open(output_file, "w")
-        file.write("PID,PID_NAME,TIME [month dd hh:mm:ss:ms],DISKUSAGE [MB],CPU[%],MEM[MB],NET_SENT[MB],NET_RECEIVED[MB]") 
+        file.write("PID,PID_NAME,TIME [month dd hh:mm:ss:ms],DISKUSAGE [MB],CPU[%],MEM[MB],NET_SENT[MB],NET_RECEIVED[MB],CURRENT_SLOT,CURRENT_PEERS") 
         file.close() 
 
 
@@ -337,13 +371,13 @@ def main():
 
     # loop over both arrays at the same time
     for single_pid, single_folder in zip(pids, folderStorage):
-        new_process = ProcessInfo(single_pid, single_folder, network_interface)
+        new_process = ProcessInfo(single_pid, single_folder, network_interface, metricPort, syncPath, peersPath)
 
         # only add if new process exists, meaning it was properly created
         if new_process.exists is True:
             process_array.append(new_process)
 
-    print("PID |    PID_NAME    |   TIME [month dd hh:mm:ss:ms]  |    DISKUSAGE [MB]    |     CPU[%],    MEM[MB],    NET_SENT[MB],    NET_RECEIVED[MB]")
+    print("PID |    PID_NAME    |   TIME [month dd hh:mm:ss:ms]  |    DISKUSAGE [MB]        |     CPU[%]   |    MEM[MB]   |    NET_SENT[MB]  |    NET_RECEIVED[MB]   |    CURRENT_SLOT    |   CURRENT_PEERS")
 
     # infinite loop
     while True: #counter < 5:
