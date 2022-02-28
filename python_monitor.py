@@ -76,6 +76,11 @@ import requests
 
 process_array = []
 
+folderPercentage = "/"
+if len(sys.argv) > 3:
+    folderPercentage = str(sys.argv[3])
+
+
 app = Flask(__name__)
 
 @app.route("/metrics")
@@ -93,7 +98,7 @@ def main():
         process_json['received_mb'] = single_process.received_mb
         process_json['currentSlot'] = single_process.currentSlot
         process_json['currentPeers'] = single_process.currentPeers
-        process_json['diskUsage_percent'] = psutil.disk_usage('/')[3]
+        process_json['diskUsage_percent'] = psutil.disk_usage(folderPercentage)[3]
         result.append(process_json)
         print(process_json)
     
@@ -116,6 +121,8 @@ NETWORK_CONFIG = "NETWORK_INTERFACE"
 PORT_METRIC_CONFIG = "METRIC_PORT"
 SYNC_METRIC_CONFIG = "SYNC_METRIC_PATH"
 PEERS_METRIC_CONFIG = "PEERS_METRIC_PATH"
+SERVER_PORT_CONFIG = "SERVER_PORT"
+FOLDER_PERCENTAGE_CONFIG = "FOLDER_PERCENTAGE"
 SLEEP_INT_CONFIG = 'SLEEP_INTERVAL'
 
 
@@ -408,5 +415,11 @@ def main():
 
 
 if __name__ == "__main__":
-    threading.Thread(target=lambda: app.run(host="0.0.0.0", port=5000, debug = False, threaded=True, use_reloader=False), daemon=True).start()
+
+    serverPort = 5000
+    if len(sys.argv) > 2:
+        serverPort = int(sys.argv[2])
+
+
+    threading.Thread(target=lambda: app.run(host="0.0.0.0", port=serverPort, debug = False, threaded=True, use_reloader=False), daemon=True).start()
     main()
