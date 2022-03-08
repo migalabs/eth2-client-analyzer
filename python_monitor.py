@@ -60,8 +60,6 @@ import psutil
 import datetime
 from datetime import datetime as dt
 
-import signal
-
 import csv
 import os.path
 import logging
@@ -146,7 +144,12 @@ def get_sync_process(i_port, i_path):
         json_data = response.json()
         return int(json_data["data"]["head_slot"])
     except:
-        return int(0)
+        try: # grandine API
+            response = requests.get("http://localhost:" + i_port + i_path)
+            json_data = response.json()
+            return int(json_data["slot"])
+        except:
+            return int(0)
 
 def get_peer_count(i_port, i_path):
     try:
@@ -163,8 +166,6 @@ class ProcessInfo():
 
     def __init__(self, input_pid, input_folder, input_net_iface, i_metricPort, i_syncPath, i_peerPath):
         
-
-
         self.pid = int(input_pid)
         try:
             self.process = psutil.Process(int(input_pid))
@@ -199,7 +200,6 @@ class ProcessInfo():
             # logging.info("Process with PID: ", input_pid, " does not exist")
             print ("No process: ", input_pid)
             self.exists = False
-
             return
             
         
@@ -351,7 +351,7 @@ def main():
     else:
         print("File does not exist, creating...")
         file = open(output_file, "w")
-        file.write("PID,PID_NAME,TIME [month dd hh:mm:ss:ms],DISKUSAGE [MB],CPU[%],MEM[MB],NET_SENT[MB],NET_RECEIVED[MB],CURRENT_SLOT,CURRENT_PEERS") 
+        file.write("PID,PID_NAME,TIME [month dd hh:mm:ss:ms],DISKUSAGE [MB],CPU[%],MEM[MB],NET_SENT[MB],NET_RECEIVED[MB],CURRENT_SLOT,CURRENT_PEERS\n") 
         file.close() 
 
 
