@@ -65,69 +65,38 @@ import os
 import matplotlib.dates as mdates
 from matplotlib.ticker import (MultipleLocator, FormatStrFormatter,
                                AutoMinorLocator)
+import matplotlib.ticker as mticker
 
 
 colorMap = {
-    'prysm': '#FF6666',
-    'lighthouse': '#489dec',
-    'teku': 'orange',
-    'nimbus': 'green',
-    'lodestar': '#9379d6',
-    'grandine': 'yellow'
+    'prysm': '#FF6666', # red
+    'lighthouse': '#489dec', # blue
+    'teku': '#FFA500', # orange
+    'nimbus': '#B6D7A8', # green
+    'lodestar': '#9379d6', # purple
+    'grandine': '#b3b300', # yellow / gold
+    'NE_Prysm': '#7f3333',
+    'NE_Lighthouse': '#244e76',
+    'NE_Teku': '#7f5200',
+    'NE_Nimbus': '#5b6b54',
+    'NE_Lodestar': '#493c6b',
+    'NE_Grandine': '#474700'
 }
 
-
-initial_timestamp = ""
-
-class Plot():
-    def __init__(self):
-
-        self.fig, self.ax = plt.subplots()
-
-        self.x_array = []
-        self.plot_data = []
-    
-    def calculate_xArray(self, i_startValue, i_maxValue, i_num_of_ticks):
-        stepSize = (i_maxValue - i_startValue) / i_num_of_ticks # step Size / jump size for plotting
-        self.x_array = np.arange (i_startValue, i_maxValue, stepSize)
-
-
-
-    def add_plot_data(self, i_client_obj, i_x_index, i_y_index):
-
-        data_indices = find_nearest_spots(self.x_array, i_client_obj.data[i_x_index])
-
-        self.plot_data.append([])
-        for item in data_indices:
-            self.plot_data[-1].append(i_client_obj.data[i_y_index][item])
-
-            
-"""
-Return the indexes of the timestamp_array_2 that are closer to each of the timestamp_array_1 items.
-We assume these arrays are ordered
-
-"""
-def find_nearest_spots(array_1, array_2):
-
-
-    array_2_index = 0
-    new_delta = abs(array_1[0] - array_2[array_2_index])
-    result = []
-    for tmp_timestamp in array_1:
-        delta = abs(tmp_timestamp - array_2[array_2_index])
-        new_delta = delta
-
-        while new_delta <= delta and array_2_index < len(array_2)-1: # iterate until we find a greater delta
-            array_2_index = array_2_index + 1
-            delta = new_delta
-            new_delta = abs(tmp_timestamp - array_2[array_2_index])
-        
-        result.append(array_2_index-1)
-
-    #print(result)
-    return result
-        
-        
+secondColorMap = {
+    'prysm': '#7f3333',
+    'lighthouse': '#244e76',
+    'teku': '#7f5200',
+    'nimbus': '#5b6b54',
+    'lodestar': '#493c6b',
+    'grandine': '#474700',
+    'NE_Prysm': '#FF6666',
+    'NE_Lighthouse': '#489dec',
+    'NE_Teku': 'FFA500',
+    'NE_Nimbus': '9379d6',
+    'NE_Lodestar': '#9379d6',
+    'NE_Grandine': '#b3b300'
+}
 
 class ClientData():
 
@@ -157,14 +126,13 @@ class ClientData():
         
         self.data[self.seqNumber].append(int(len(self.data[self.seqNumber])))
         self.data[self.timestamp].append(datetime.datetime.strptime(i_row[2], '%d/%m/%Y-%H:%M:%S:%f').timestamp())
-        #print(self.timestamp[-1])
         self.data[self.diskUsage].append(float("{:.2f}".format(float(i_row[3]) / 1000)))
         self.data[self.cpuUsage].append(float("{:.2f}".format(float(i_row[4]))))
         self.data[self.memUsage].append(float("{:.2f}".format(float(i_row[5]))))
-        #self.data[self.netSent].append(float(i_row[6]))
-        #self.data[self.netReceived].append(float("{:.2f}".format(float(i_row[7]))))
-        #self.data[self.currentSlot].append(int(i_row[8]))
-        #self.data[self.currentPeers].append(int(i_row[9]))
+        self.data[self.netSent].append(float(i_row[6]) / 1000)
+        self.data[self.netReceived].append(float("{:.2f}".format(float(i_row[7]))) / 1000)
+        self.data[self.currentSlot].append(int(i_row[8]))
+        self.data[self.currentPeers].append(int(i_row[9]))
     
 # checks if the specified name exists in an array of ClientData objects
 # returns the index of the specified client name in case of found.
@@ -207,9 +175,171 @@ def import_from_file(i_file, client_object_array):
 
             client_object_array[client_index].add_row(row)
 
+PlotMetadata = {
+    'disk': {'graphTitle': "Disk_Usage", 'yLabel': "Disk Usage in GB", 'data_index': ClientData.diskUsage},
+    'cpu': {'graphTitle': "CPU_Usage", 'yLabel': "CPU %", 'data_index': ClientData.cpuUsage},
+    'mem': {'graphTitle': "MEM_Usage", 'yLabel': "Memory [MB]", 'data_index': ClientData.memUsage},
+    'netSent': {'graphTitle': "Network Sent", 'yLabel': "Net Sent [GB]", 'data_index': ClientData.netSent},
+    'netReceived': {'graphTitle': "Network Received", 'yLabel': "Net Received [GB]", 'data_index': ClientData.netReceived},
+    'slot': {'graphTitle': "Slot", 'yLabel': "Slot Number", 'data_index': ClientData.currentSlot},
+    'peers': {'graphTitle': "Peers", 'yLabel': "Peer number", 'data_index': ClientData.currentPeers},
+}
+
+"""
+Return the indexes of the timestamp_array_2 that are closer to each of the timestamp_array_1 items.
+We assume these arrays are ordered
+
+"""
+def find_nearest_spots(array_1, array_2):
+
+
+    array_2_index = 0
+    new_delta = abs(array_1[0] - array_2[array_2_index])
+    result = []
+    for tmp_timestamp in array_1:
+        delta = abs(tmp_timestamp - array_2[array_2_index])
+        new_delta = delta
+
+        while new_delta <= delta and array_2_index < len(array_2)-1: # iterate until we find a greater delta
+            array_2_index = array_2_index + 1
+            delta = new_delta
+            new_delta = abs(tmp_timestamp - array_2[array_2_index])
+        
+        result.append(array_2_index-1)
+
+    #print(result)
+    return result
+
+
+def item_in_array(lookup_value, array):
+    for item in array:
+        if item == lookup_value:
+            return True
+    return False
 
 
 
+class Plot():
+    def __init__(self, i_config_obj, i_section, i_second_y_axis = False):
+
+        self.section = i_section
+        self.fig, self.ax = plt.subplots()
+
+        self.import_metrics(i_config_obj)
+
+        if i_second_y_axis:
+            self.ax2 = self.ax.twinx()
+
+        self.x_array = [] # array of data
+        self.x_labels = [] # array of data stringified
+        self.plot_data = []
+        self.second_plot_data = []
+    
+    def finish_plot(self, i_client_obj = None):
+        self.ax.grid(axis='y')
+        self.ax.grid(axis='x')
+
+        yLabel_color = "#000"
+        if i_client_obj is not None:
+            yLabel_color = colorMap[i_client_obj.name]
+        
+        self.ax.set_ylabel(self.yLabel, color=yLabel_color)
+
+        self.ax.set_title(self.graphTitle)
+        self.ax.legend()
+        self.ax.xaxis.set_minor_locator(AutoMinorLocator())
+        self.ax.set_ylim([self.min_y_value, self.max_y_value])
+
+        second_yLabel_color = "#000"
+        if i_client_obj is not None:
+            second_yLabel_color = secondColorMap[i_client_obj.name]
+
+        if self.second_data_index != -1:
+            self.ax2.set_ylabel(self.second_yLabel, color=second_yLabel_color)
+            self.ax2.set_ylim([self.min_second_y_value, self.max_second_y_value])
+        
+        plt.tight_layout()
+        #plt.show()
+        plt.savefig(self.storePath)
+
+        #ax.tick_params(axis="x", which="both", rotation=45)
+
+    def calculate_xArray(self, i_startValue, i_maxValue):
+        stepSize = (i_maxValue - i_startValue)
+        stepSize = stepSize / self.num_of_ticks # step Size / jump size for plotting
+        self.x_array = np.arange (i_startValue, i_maxValue, stepSize)
+    
+    def plot(self, i_ax, i_x_labels, i_plot_data, i_label, i_color, i_type = 'line'):
+        if i_type == 'line':
+            i_ax.plot(i_x_labels, i_plot_data, label=i_label, color=i_color)
+        
+        elif i_type == 'scatter':
+            dot_sizes = [2] * len(i_plot_data)
+            i_ax.scatter(i_x_labels, i_plot_data, label=i_label, color=i_color, s=dot_sizes)
+
+    # i_x_index = the array from the client obj to use as x (usually seqNumber or timestamp or currentSlot)
+    def add_plot_data(self, i_client_obj, i_x_index):
+        
+        data_indices = find_nearest_spots(self.x_array, i_client_obj.data[i_x_index])
+
+        self.plot_data.append([])
+        self.second_plot_data.append([])
+        for item in data_indices:
+            self.plot_data[-1].append(i_client_obj.data[self.data_index][item])
+            # in case a second plot
+            if self.second_data_index != -1:
+                self.second_plot_data[-1].append(i_client_obj.data[self.second_data_index][item])
+        
+        self.plot(self.ax, self.x_labels, self.plot_data[-1], i_client_obj.name, colorMap[i_client_obj.name], self.plotType)
+
+        if self.second_data_index != -1:
+            self.ax2 = self.ax.twinx()
+            self.plot(self.ax2, self.x_labels, self.second_plot_data[-1], i_client_obj.name, secondColorMap[i_client_obj.name], self.secondPlotType)
+
+        
+    def import_metrics(self, config_obj):
+        self.metricName = str(config_obj.get(self.section, "METRIC_NAME")) 
+        self.plotType = str(config_obj.get(self.section, "PLOT_TYPE")) 
+
+        self.second_metricName = str(config_obj.get(self.section, "SECOND_METRIC_NAME"))
+        self.secondPlotType = str(config_obj.get(self.section, "SECOND_PLOT_TYPE")) 
+        
+        self.num_of_ticks = int(config_obj.get(self.section, "NUM_OF_POINTS")) 
+        self.initial_timestamp = datetime.datetime.strptime(config_obj.get(self.section, "INITIAL_DATE"), '%d/%m/%Y %H:%M:%S').timestamp() #print("Initial timestamp: " + str(num_of_ticks))
+        self.secs_interval = int(config_obj.get(self.section, "INTERVAL_SECS")) 
+        
+        self.xaxis_mode = str(config_obj.get(self.section, "XAXIS")) 
+        self.start_x = int(config_obj.get(self.section, "START_X")) 
+        
+        self.min_y_value = int(config_obj.get(self.section, "MIN_Y_VALUE")) 
+        self.max_y_value = int(config_obj.get(self.section, "MAX_Y_VALUE")) 
+        self.min_second_y_value = int(config_obj.get(self.section, "MIN_SECOND_Y_VALUE"))
+        self.max_second_y_value = int(config_obj.get(self.section, "MAX_SECOND_Y_VALUE"))
+        
+        self.client_allowlist = str(config_obj.get(self.section, "CLIENT_ALLOWLIST")).split(",")
+
+        self.storePath = str(config_obj.get(self.section, "STORE_PATH"))
+
+        # 0 for DiskUsage, 1 for CPUUsage, 2 for MemUSage
+
+        self.yLabel = ""
+        self.second_yLabel = ""
+        self.graphTitle = ""
+        self.data_index = -1
+        self.second_data_index =-1
+
+        if self.metricName in PlotMetadata:
+            self.graphTitle = PlotMetadata[self.metricName]['graphTitle']
+            self.yLabel = PlotMetadata[self.metricName]['yLabel']
+            self.data_index = PlotMetadata[self.metricName]['data_index']
+        else:
+            print("Unknown metric type.")
+            exit(0)
+        
+        if self.second_metricName in PlotMetadata:
+            self.graphTitle = self.graphTitle + " vs " + PlotMetadata[self.metricName]['graphTitle']
+            self.second_yLabel = PlotMetadata[self.metricName]['yLabel']
+            self.second_data_index = PlotMetadata[self.metricName]['data_index']
 
 def main():
 
@@ -225,47 +355,10 @@ def main():
     else:
         print("Config file not found")
         exit()
-    
-    metricName = str(config_obj.get("BASIC", "METRIC_NAME"))
-    print("Metric name: " + str(metricName))
 
-    num_of_ticks = int(config_obj.get("BASIC", "NUM_OF_POINTS"))
-    print("Number of points: " + str(num_of_ticks))
+    section_number = 1
+    section_base_name = "PLOT"
 
-    initial_timestamp = datetime.datetime.strptime(config_obj.get("BASIC", "INITIAL_DATE"), '%d/%m/%Y %H:%M:%S').timestamp()
-    print("Initial timestamp: " + str(num_of_ticks))
-
-    xaxis_mode = str(config_obj.get("BASIC", "XAXIS"))
-    print("xaxis mode is: " + str(xaxis_mode))
-
-    secs_interval = int(config_obj.get("BASIC", "INTERVAL_SECS"))
-    print("Interval secs: " + str(secs_interval))
-
-    start_x = int(config_obj.get("BASIC", "START_X"))
-    print("Start slot: " + str(start_x))
-
-    # 0 for DiskUsage, 1 for CPUUsage, 2 for MemUSage
-    yLabel = ""
-    graphTitle = ""
-    data_index = 0
-    if metricName == 'disk':
-        graphTitle = "Disk_Usage"
-        yLabel = "Disk Usage in GB"
-        data_index = ClientData.diskUsage
-    elif metricName == 'cpu':
-        graphTitle = "CPU_Usage"
-        yLabel = "CPU %"
-        data_index = ClientData.cpuUsage
-    elif metricName == 'mem':
-        graphTitle = "MEM_Usage"
-        yLabel = "Memory [MB]"
-        data_index = ClientData.memUsage
-    else:
-        print("Unknown metric type. Default (disk) applied.")
-        metricName = 'disk'
-        graphTitle = "Disk_Usage"
-        yLabel = "Disk Usage in GB"
-        data_index = ClientData.diskUsage
 
     number_of_args = len(sys.argv)
     data_files = []
@@ -279,68 +372,65 @@ def main():
     for file in data_files:
         import_from_file(file, client_object_array)
 
-    
-    print("You chose metric: ", metricName)
+    while config_obj.has_section(section_base_name+str(section_number)):
+        section = section_base_name+str(section_number)
+        section_number = section_number + 1
+        plot_obj = Plot(config_obj, section)
 
-    x_array = []
-    x_labels = []
-
-    plot_obj = Plot()
-
-    if xaxis_mode == 'date':
-
-        # calculate the minimum last date
-        maximumDate = min([x.data[ClientData.timestamp][-1] for x in client_object_array])
-
-        plot_obj.calculate_xArray(initial_timestamp, maximumDate, num_of_ticks)
-        x_labels = [datetime.datetime.utcfromtimestamp(x) for x in plot_obj.x_array]
-
+        client_object_subarray = []
+        print(plot_obj.client_allowlist)
         for client in client_object_array:
-            plot_obj.add_plot_data(client, ClientData.timestamp, data_index)
-            plot_obj.ax.plot(x_labels, plot_obj.plot_data[-1], label=client.name, color=colorMap[client.name])
+            
+            if item_in_array(client.name, plot_obj.client_allowlist):
+                client_object_subarray.append(client)
         
-        majorTicksFormat = mdates.DateFormatter('%d/%m/%Y-%H:%M:%S')
-        plot_obj.ax.xaxis.set_major_formatter(majorTicksFormat)
-        plot_obj.fig.autofmt_xdate(rotation=45)
+        if plot_obj.xaxis_mode == 'date':
+
+            # calculate the minimum last date
+            maximumDate = min([x.data[ClientData.timestamp][-1] for x in client_object_subarray])
+
+            plot_obj.calculate_xArray(plot_obj.initial_timestamp, maximumDate)
+            plot_obj.x_labels = [datetime.datetime.utcfromtimestamp(x) for x in plot_obj.x_array]
+
+            for client in client_object_subarray:
+                plot_obj.add_plot_data(client, ClientData.timestamp)
+            
+            majorTicksFormat = mdates.DateFormatter('%d/%m-%H:%M')
+            plot_obj.ax.xaxis.set_major_formatter(majorTicksFormat)
+            plot_obj.ax.tick_params(axis='x', labelsize=8)
+            plot_obj.fig.autofmt_xdate(rotation=30)
+            plot_obj.ax.set_xlabel("Date", fontsize=12)
+
+        if plot_obj.xaxis_mode == 'seq':
+            maxValue = min([x.data[ClientData.seqNumber][-1] for x in client_object_subarray])
+
+            plot_obj.calculate_xArray(plot_obj.start_x, maxValue)
+            plot_obj.x_labels = [plot_obj.secs_interval*x/3600 for x in plot_obj.x_array]
+
+            for client in client_object_subarray:
+                plot_obj.add_plot_data(client, ClientData.seqNumber)
+
+            plot_obj.ax.set_xlabel("Hours", fontsize=12)
         
+        if plot_obj.xaxis_mode == 'slot':
 
-    if xaxis_mode == 'seq':
-        maxValue = min([x.data[ClientData.seqNumber][-1] for x in client_object_array])
+            maxValue = min([x.data[ClientData.currentSlot][-1] for x in client_object_subarray])
+            
+            plot_obj.calculate_xArray(plot_obj.start_x, maxValue)
+            
+            plot_obj.x_labels = plot_obj.x_array
 
-        plot_obj.calculate_xArray(start_x, maxValue, num_of_ticks)
-        x_labels = [secs_interval*x/3600 for x in plot_obj.x_array]
+            for client in client_object_subarray:
+                plot_obj.add_plot_data(client, ClientData.currentSlot)
 
-        for client in client_object_array:
-            plot_obj.add_plot_data(client, ClientData.seqNumber, data_index)
-            plot_obj.ax.plot(x_labels, plot_obj.plot_data[-1], label=client.name, color=colorMap[client.name])
+                plot_obj.ax.ticklabel_format(axis='x', style='plain', scilimits=(-3, 3), useMathText=True)
 
-        plt.xlabel("Hours", fontsize=12)
-    
-    if xaxis_mode == 'slot':
+            plot_obj.ax.set_xlabel("Slot", fontsize=12)
 
-        maxValue = min([x.data[ClientData.currentSlot][-1] for x in client_object_array])
-        maxValue = min([x.data[ClientData.currentSlot][-1] for x in client_object_array])
-
-        plot_obj.calculate_xArray(start_x, maxValue, num_of_ticks)
-        x_labels = plot_obj.x_array
-
-        for client in client_object_array:
-            plot_obj.add_plot_data(client, ClientData.currentSlot, data_index)
-            plot_obj.ax.set_xticklabels(['{:,.0f}'.format(x) for x in x_labels])
-            plot_obj.ax.plot(x_labels, plot_obj.plot_data[-1], label=client.name, color=colorMap[client.name])
-
-        plt.xlabel("Slot", fontsize=12)
-
-    print(graphTitle)
-    plot_obj.ax.grid(axis='y')
-    plot_obj.ax.grid(axis='x')
-    plt.ylabel(yLabel)
-    plt.title(graphTitle)
-    plt.legend()
-    plot_obj.ax.xaxis.set_minor_locator(AutoMinorLocator())
-    
-    #ax.tick_params(axis="x", which="both", rotation=45)
-    plt.show()
+        if len(client_object_subarray) == 1 and plot_obj.second_data_index != -1:
+            plot_obj.finish_plot(client_object_subarray[0])
+        else:
+            plot_obj.finish_plot()
 
 
 if __name__ == "__main__":
