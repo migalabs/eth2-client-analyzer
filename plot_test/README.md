@@ -18,7 +18,11 @@ It merely needs the Python interpreter to run it.
 The Execution command looks like the following:
 
 ```
-python3 plot_data.py <metricType> <data_file>
+python3 plot_data.py <config-file> csv-files
+
+Example:
+python3 plot_data.py configs/config_plot_NEvs_cpu.ini mainnet2/grandine_sample_13300.csv mainnet2/NE_grandine.csv
+
 ```
 Keep in mind that there are three different keywords we can give as metricType argument:
 - "mem" --> Outputs the Memory consumption plot
@@ -26,3 +30,26 @@ Keep in mind that there are three different keywords we can give as metricType a
 - "disk" --> Outputs the Disk Usage plot
 
 For the data_file argument, we may input the file we want to read the data from.
+
+
+(pending to document)
+Config file
+
+```
+[PLOT1]
+METRIC_NAME = disk (choose between disk, cpu, mem, slot, peers, netSent, netReceived)
+PLOT_TYPE = line (choose between line, scatter)
+SECOND_METRIC_NAME =
+SECOND_PLOT_TYPE = scatter
+NUM_OF_POINTS = 100
+INITIAL_DATE = 11/02/2022 14:21:32
+XAXIS = slot
+INTERVAL_SECS = 30
+START_X = 0
+MIN_Y_VALUE = 0
+MAX_Y_VALUE = 120
+MIN_SECOND_Y_VALUE = 0
+MAX_SECOND_Y_VALUE = 100
+CLIENT_ALLOWLIST = grandine,NE_grandine
+STORE_PATH = figures/mainnet/disk/sync_grandine_NE
+```
