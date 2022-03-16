@@ -1,7 +1,7 @@
 
 
 import configparser
-from datetime import datetime
+from datetime import datetime, timedelta
 import os
 # seed the pseudorand number generator
 from random import seed
@@ -18,12 +18,13 @@ TIMEOUT = 10
 # rande_numbers will be the same length as num_of_queries
 def do_replace_requests(i_port, i_path, i_num_of_queries, i_name, i_rand_numbers):
     result = []
-
+    # headers
     result.append([])
     result[-1].append("NAME")
     result[-1].append("TIMESTAMP")
     result[-1].append("PATH")
-    result[-1].append("MICROSECONDS")
+    result[-1].append("MICROSECONDS_REQ")
+    result[-1].append("MICROSECONDS_DELTA")
 
     for i in range(0, i_num_of_queries, 1):
         
@@ -35,10 +36,15 @@ def do_replace_requests(i_port, i_path, i_num_of_queries, i_name, i_rand_numbers
         tmp_path = str(i_path).replace("/xyz", argument)
         url = str(LOCALHOST + str(i_port) + tmp_path)
 
-
+        first_timestamp = datetime.now()
         response = requests.get(url, timeout = TIMEOUT)
+        second_timestamp = datetime.now()
+        delta = (second_timestamp - first_timestamp)
+        delta = delta / timedelta(microseconds=1)
         result[-1].append(tmp_path)
         result[-1].append(response.elapsed.microseconds)
+        result[-1].append(delta)
+        print(i)
     
     return result
 
