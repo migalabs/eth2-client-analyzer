@@ -128,11 +128,13 @@ class ClientData():
         self.data[self.timestamp].append(datetime.datetime.strptime(i_row[2], '%d/%m/%Y-%H:%M:%S:%f').timestamp())
         self.data[self.diskUsage].append(float("{:.2f}".format(float(i_row[3]) / 1000)))
         self.data[self.cpuUsage].append(float("{:.2f}".format(float(i_row[4]))))
-        self.data[self.memUsage].append(float("{:.2f}".format(float(i_row[5]))))
+        memUsage_MB = float(i_row[5]) * 1000000 / (1024 * 1024) # from bytes to MB
+        self.data[self.memUsage].append(float("{:.2f}".format(memUsage_MB)))
         self.data[self.netSent].append(float(i_row[6]) / 1000)
-        self.data[self.netReceived].append(float("{:.2f}".format(float(i_row[7]))) / 1000)
+        self.data[self.netReceived].append(float("{:.2f}".format(float(i_row[7]) / 1000)))
         self.data[self.currentSlot].append(int(i_row[8]))
         self.data[self.currentPeers].append(int(i_row[9]))
+        
     
 # checks if the specified name exists in an array of ClientData objects
 # returns the index of the specified client name in case of found.
@@ -289,7 +291,7 @@ class Plot():
             # in case a second plot
             if self.second_data_index != -1:
                 self.second_plot_data[-1].append(i_client_obj.data[self.second_data_index][item])
-        
+        #print(i_client_obj.name, self.plot_data[-1][-1], data_indices[-1])
         self.plot(self.ax, self.x_labels, self.plot_data[-1], i_client_obj.name, colorMap[i_client_obj.name], self.plotType)
 
         if self.second_data_index != -1:
@@ -383,6 +385,7 @@ def main():
             
             if item_in_array(client.name, plot_obj.client_allowlist):
                 client_object_subarray.append(client)
+                
         
         if plot_obj.xaxis_mode == 'date':
 
