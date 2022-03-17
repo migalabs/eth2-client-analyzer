@@ -97,6 +97,7 @@ def main():
         i_csv_path = str(config_obj.get(section_name, "CSV_FILE_PATH"))
 
         print(i_name)
+        print("Number of queries:", num_of_queries)
 
         result = np.array(do_replace_requests(i_port, i_path, num_of_queries, i_name, rand_numbers))
         print("Average Req:                       ", result[:,3].astype(np.float64).mean(), "  MILISECONDS")

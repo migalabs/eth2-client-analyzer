@@ -1,0 +1,11 @@
+NAME,TIMESTAMP,PATH,MICROSECONDS_REQ,MICROSECONDS_DELTA
+lighthouse,2022-03-17 09:19:59.604618,http://localhost:5052/eth/v2/beacon/blocks/1347094,602.54,605582.0
+lighthouse,2022-03-17 09:19:59.604639,http://localhost:5052/eth/v2/beacon/blocks/1789365,439.649,616771.0
+lighthouse,2022-03-17 09:19:59.604643,http://localhost:5052/eth/v2/beacon/blocks/1934352,398.372,403953.0
+lighthouse,2022-03-17 09:19:59.604645,http://localhost:5052/eth/v2/beacon/blocks/1333550,419.194,424782.0
+lighthouse,2022-03-17 09:19:59.604648,http://localhost:5052/eth/v2/beacon/blocks/1814279,462.532,467527.0
+lighthouse,2022-03-17 09:19:59.604650,http://localhost:5052/eth/v2/beacon/blocks/2448428,399.852,402947.0
+lighthouse,2022-03-17 09:19:59.604653,http://localhost:5052/eth/v2/beacon/blocks/730743,393.818,399547.0
+lighthouse,2022-03-17 09:19:59.604655,http://localhost:5052/eth/v2/beacon/blocks/1190776,419.954,428922.0
+lighthouse,2022-03-17 09:19:59.604658,http://localhost:5052/eth/v2/beacon/blocks/3165853,536.092,541872.0
+lighthouse,2022-03-17 09:19:59.604660,http://localhost:5052/eth/v2/beacon/blocks/2915329,490.172,495934.0
