@@ -23,8 +23,8 @@ def do_replace_requests(i_port, i_path, i_num_of_queries, i_name, i_rand_numbers
     result[-1].append("NAME")
     result[-1].append("TIMESTAMP")
     result[-1].append("PATH")
-    result[-1].append("MICROSECONDS_REQ") # from response.elapsed.microseconds
-    result[-1].append("MICROSECONDS_DELTA") # from measure timestamp difference
+    result[-1].append("MILISECONDS_REQ") # from response.elapsed.microseconds
+    result[-1].append("MILISECONDS_DELTA") # from measure timestamp difference
 
     for i in range(0, i_num_of_queries, 1):
         result.append([])
@@ -44,18 +44,18 @@ def do_replace_requests(i_port, i_path, i_num_of_queries, i_name, i_rand_numbers
         response = requests.get(result[idx+1][2], timeout = TIMEOUT) # first line is the title
         second_timestamp = datetime.now()
         delta = (second_timestamp - first_timestamp)
-        delta = delta / timedelta(microseconds=1)
-        result[idx+1].append(response.elapsed.microseconds)
+        delta = delta / timedelta(milliseconds=1)
+        result[idx+1].append(response.elapsed.microseconds/1000)
         result[idx+1].append(delta)
         #print(idx)
 
     second_whole_timestamp = datetime.now()
     whole_delta = second_whole_timestamp - first_whole_timestamp # delta
-    whole_delta = whole_delta / timedelta(microseconds=1) # microseconds
+    whole_delta = whole_delta / timedelta(milliseconds=1) # microseconds
     whole_delta = whole_delta / i_num_of_queries # average
-    print("Start time:       ", str(first_whole_timestamp))
-    print("Finish timestamp: ", str(second_whole_timestamp))
-    print("Average Delta:    ", whole_delta, "  MICROSECONDS")
+    print("Start time:  ", str(first_whole_timestamp))
+    print("Finish time: ", str(second_whole_timestamp))
+    print("Average Delta:    ", whole_delta, "  MILISECONDS")
     return result
 
 
