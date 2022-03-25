@@ -8,14 +8,16 @@ import os
 from random import seed
 import random as rand
 import sys
+import traceback
 
 import requests
 from async_timeout import timeout
 import numpy as np
+from urllib3 import HTTPConnectionPool
 
-LOCALHOST = "http://localhost:"
+LOCALHOST = "http://crawler-warsaw1:"
 MAX_VALIDATOR = 21063
-TIMEOUT = 20
+TIMEOUT = 10
 TAB_SIZE = 10
 
 class RandomPaths:
@@ -73,14 +75,11 @@ def do_random_requests(i_name, i_rand_paths):
             second_timestamp = datetime.now()
             delta = (second_timestamp - first_timestamp)
             delta = delta / timedelta(milliseconds=1) #individual time lapse
-            result[idx].append(response.elapsed.microseconds/1000) # time lapse python package provides
+            result[idx].append(response.elapsed.total_seconds()*1000) # time lapse python package provides
             result[idx].append(delta)
             result[idx].append(int(response.status_code))
-
-            print(delta)
-            print(response.elapsed.microseconds/1000)
-            #print(response.text)
-        except: # probably a timeout
+            
+        except requests.exceptions.ReadTimeout as e: # probably a timeout
             result[idx].append(TIMEOUT * 1000) # time lapse python package provides
             result[idx].append(TIMEOUT * 1000)
             result[idx].append(408)
@@ -153,8 +152,8 @@ def main():
         max_value_index = result[:,3].astype(np.float64).argmax()
         req_mean = "{:.2f}".format(result[:,3].astype(np.float64).mean())
         row_delta_mean = "{:.2f}".format(result[:,4].astype(np.float64).mean())
-        best_score = "{:.2f}".format(result[min_value_index][3].astype(np.float64))
-        worst_score = "{:.2f}".format(result[max_value_index][3].astype(np.float64))
+        best_score = "{:.2f}".format(result[min_value_index][4].astype(np.float64))
+        worst_score = "{:.2f}".format(result[max_value_index][4].astype(np.float64))
 
 
         print("Average Req:                       ", f"{req_mean:<10}", "MILISECONDS")
