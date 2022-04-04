@@ -20,6 +20,8 @@ MAX_VALIDATOR = 21063
 TIMEOUT = 10
 TAB_SIZE = 10
 
+summary = ""
+
 class RandomPaths:
 
     def __init__(self, i_config):
@@ -55,6 +57,7 @@ class StatePath(RandomPaths):
 # rand_numbers will be the same length as num_of_queries
 # this function basically performs as many requests as random numbers are given
 def do_random_requests(i_name, i_rand_paths):
+    global summary
     result = []
 
     # fill the result matrix with basic data
@@ -89,16 +92,16 @@ def do_random_requests(i_name, i_rand_paths):
     whole_delta = second_whole_timestamp - first_whole_timestamp # delta
     whole_delta = whole_delta / timedelta(milliseconds=1) # microseconds
     whole_delta = whole_delta / len(i_rand_paths) # average
-    print("Start time:                        ", str(first_whole_timestamp))
-    print("Finish time:                       ", str(second_whole_timestamp))
-    print("Average Delta (Finish - Start):    ", f"{whole_delta:<10}",  "MILISECONDS")
+    summary = summary + "\nStart time:                        " + str(first_whole_timestamp) + "\n" + \
+    "Finish time:                       " + str(second_whole_timestamp) + "\n" + \
+    "Average Delta (Finish - Start):    " + str(f"{whole_delta:<10}") + "MILISECONDS"
     
     return result
 
 
 
 def main():
-
+    global summary
     # prepare to parse config file
     config_file = os.path.join(os.path.abspath(os.path.dirname(__file__)), str(sys.argv[1]))
     config_obj = configparser.ConfigParser()
@@ -128,7 +131,6 @@ def main():
         i_port = int(config_obj.get(section_name, "PORT"))
         i_mode = str(config_obj.get(section_name, "MODE"))
         i_name = str(config_obj.get(section_name, "NAME"))
-        i_csv_path = str(config_obj.get(section_name, "CSV_FILE_PATH"))
 
 
         # read file containing ranom paths in case it exists
@@ -142,8 +144,7 @@ def main():
             random_obj.execute(i_port)
             rand_paths = random_obj.result
 
-        print(i_name)
-        print("Number of queries:", num_of_queries)
+        summary = summary + i_name + "\n" + "Number of queries: " + str(num_of_queries)
 
         result = np.array(do_random_requests(i_name, rand_paths))
 
@@ -156,16 +157,24 @@ def main():
         worst_score = "{:.2f}".format(result[max_value_index][4].astype(np.float64))
 
 
-        print("Average Req:                       ", f"{req_mean:<10}", "MILISECONDS")
-        print("Average Row Delta:                 ", f"{row_delta_mean:<10}", "MILISECONDS")
-        print("Best score:                        ", f"{best_score:<10}",   "MILISECONDS", result[min_value_index][2])
-        print("Worst score:                       ", f"{worst_score:<10}",   "MILISECONDS", result[max_value_index][2])
-        print("200 score:                         ", result[:,5].tolist().count("200") / num_of_queries * 100, "%")
+        summary = summary + "\nAverage Req:                       " + str(f"{req_mean:<10}") + "MILISECONDS " + "\n" + \
+        "Average Row Delta:                 " +  str(f"{row_delta_mean:<10}") + "MILISECONDS " + "\n" + \
+        "Best score:                        " +  str(f"{best_score:<10}") +   "MILISECONDS " + result[min_value_index][2] + "\n" + \
+        "Worst score:                       " +  str(f"{worst_score:<10}") +   "MILISECONDS " + result[max_value_index][2] + "\n" + \
+        "200 score:                         " +  str(result[:,5].tolist().count("200") / num_of_queries * 100) + "%"
 
         result = np.insert(result, 0, np.array(["NAME", "TIMESTAMP", "PATH", "REQ_TIME", "DELTA_TIME", "RESPONSE_CODE"]), 0)
-        np.savetxt(i_csv_path, result, delimiter=',', fmt='%s')
         
-
+        
+        mydir = os.path.join(os.getcwd(),datetime.now().strftime('%Y%m%d_%H%M'))
+        os.makedirs(mydir)
+        csv_path = os.path.join(mydir, 'test_' + i_name + str(len(rand_paths)) + '.csv')
+        np.savetxt(csv_path, result, delimiter=',', fmt='%s')
+        summary_path = os.path.join(mydir, 'summary_' + i_name + str(len(rand_paths)) + '.txt')
+        text_file = open(summary_path, "w")
+        n = text_file.write(summary)
+        text_file.close()
+        
         np.savetxt("./random1.csv", rand_paths, delimiter=',', fmt='%s')
 
         section_number = section_number + 1
