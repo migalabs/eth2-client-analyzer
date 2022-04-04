@@ -15,7 +15,7 @@ from async_timeout import timeout
 import numpy as np
 from urllib3 import HTTPConnectionPool
 
-LOCALHOST = "http://crawler-warsaw1:"
+LOCALHOST = "http://localhost:"
 MAX_VALIDATOR = 21063
 TIMEOUT = 10
 TAB_SIZE = 10
