@@ -17,7 +17,7 @@ from urllib3 import HTTPConnectionPool
 
 LOCALHOST = "http://localhost:"
 MAX_VALIDATOR = 21063
-TIMEOUT = 10
+TIMEOUT = 50
 TAB_SIZE = 10
 
 summary = ""
