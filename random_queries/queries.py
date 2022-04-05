@@ -175,7 +175,11 @@ def main():
         n = text_file.write(summary)
         text_file.close()
         
-        np.savetxt("./random1.csv", rand_paths, delimiter=',', fmt='%s')
+        random_path = os.path.join(mydir, "random" + str(num_of_queries) + ".csv")
+        np.savetxt(random_path, rand_paths, delimiter=',', fmt='%s')
+
+        config_path = os.path.join(mydir, "config_" + i_name +  str(num_of_queries) + ".ini")
+        os.system('cp ' + config_file + ' ' + config_path)
 
         section_number = section_number + 1
         section_name = str(section_base_name + str(section_number))
