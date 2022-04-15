@@ -146,18 +146,38 @@ MAX_MAJOR_TICKS = 5
 
 class ClientData():
 
-    seqNumber = 0
+    seq_number = 0
     timestamp = 1
-    diskUsage = 2
-    cpuUsage = 3
-    memUsage = 4
-    netSent = 5
-    netReceived = 6
-    currentSlot = 7
-    currentPeers = 8
-    netInRatio = 9
-    netOutRatio = 10
-    rewards = 11
+    disk_usage = 2
+    cpu_usage = 3
+    mem_usage = 4
+    net_sent = 5
+    net_received = 6
+    current_slot = 7
+    current_peers = 8
+    mem_percentage = 9
+    cpu60 = 10
+    cpu300 = 11
+    cpu900 = 12
+    cpu_0 = 13
+    cpu_1 = 14
+    cpu_2 = 15
+    cpu_3 = 16
+    disk_node_mb = 17
+    disk_node_prcnt = 18
+    io_write_mb_s = 19
+    io_read_mb_s = 20
+    io_write_op_s = 21
+    io_read_op_s = 22
+    io_write_prcnt = 23
+    io_read_prcnt = 24
+    net_sent_mb_s = 25
+    net_received_mb_s = 26
+    net_sent_pkg_s = 27
+    net_received_pkg_s = 28
+    tcp = 29
+    rewards = 30
+
     
 
     def __init__(self, i_pid, i_name):
@@ -166,7 +186,7 @@ class ClientData():
 
         self.data = []
 
-        for _ in range(0,11):
+        for _ in range(0,31):
             self.data.append([])
 
 
@@ -174,40 +194,69 @@ class ClientData():
     def add_row(self, i_row):
         #self.timestamp.append(mktime(datetime.datetime.strptime(i_row[2], '%B %d %H:%M:%S:%f').timetuple()))
         
-        self.data[self.seqNumber].append(int(len(self.data[self.seqNumber])))
+        self.data[self.seq_number].append(int(len(self.data[self.seq_number])))
         self.data[self.timestamp].append(datetime.datetime.strptime(i_row[2], '%d/%m/%Y-%H:%M:%S:%f').timestamp())
         
         diskUsage_GB = float(i_row[3]) * 1000000 / (1024 * 1024 * 1024) # from bytes to GB
         if "NE_" in self.name:
             diskUsage_GB = float(i_row[3]) / 1024
-        self.data[self.diskUsage].append(float("{:.2f}".format(diskUsage_GB)))
+        self.data[self.disk_usage].append(float("{:.2f}".format(diskUsage_GB)))
         
-        self.data[self.cpuUsage].append(float("{:.2f}".format(float(i_row[4]))))
+        self.data[self.cpu_usage].append(float("{:.2f}".format(float(i_row[4]))))
         
         memUsage_MB = float(i_row[5]) * 1000000 / (1024 * 1024) # from bytes to MB
         if "NE_" in self.name:
             memUsage_MB = float(i_row[5])
-        self.data[self.memUsage].append(float("{:.2f}".format(memUsage_MB)))
+        self.data[self.mem_usage].append(float("{:.2f}".format(memUsage_MB)))
 
 
         netSent_GB = float(i_row[6]) * 1000000 / (1024 * 1024 * 1024) # from bytes to GB
         if "NE_" in self.name:
             netSent_GB = float(i_row[6]) / 1024
-        self.data[self.netSent].append(netSent_GB)
+        self.data[self.net_sent].append(netSent_GB)
         
         netRecived_GB = float(i_row[7]) * 1000000 / (1024 * 1024 * 1024) # from bytes to GB
         if "NE_" in self.name:
             netRecived_GB = float(i_row[7]) / 1024
 
-        self.data[self.netReceived].append(float("{:.2f}".format(netRecived_GB)))
-        self.data[self.currentSlot].append(int(i_row[8]))
-        self.data[self.currentPeers].append(int(i_row[9]))
+        self.data[self.net_received].append(float("{:.2f}".format(netRecived_GB)))
+        self.data[self.current_slot].append(int(i_row[8]))
+        self.data[self.current_peers].append(int(i_row[9]))
 
-        #netOutRatio_MB = float(i_row[6]) * 1000000 / (1024 * 1024) # from bytes to GB
-        #self.data[self.netInRatio].append(netOutRatio_MB)
-#
-        #netInRatio_MB = float(i_row[11]) * 1000000 / (1024 * 1024) # from bytes to GB
-        #self.data[self.netOutRatio].append(netInRatio_MB)
+        if "NE_" in self.name:
+            # in csv 0 - 1
+            self.data[self.mem_percentage].append(float("{:.2f}".format(float(i_row[10]))))
+
+            self.data[self.cpu60].append(float("{:.2f}".format(float(i_row[11]))))
+            self.data[self.cpu300].append(float("{:.2f}".format(float(i_row[12]))))
+            self.data[self.cpu900].append(float("{:.2f}".format(float(i_row[13]))))
+
+            self.data[self.cpu_0].append(float("{:.2f}".format(float(i_row[14]) * 100 / 4)))
+            self.data[self.cpu_1].append(float("{:.2f}".format(float(i_row[15]) * 100 / 4)))
+            self.data[self.cpu_2].append(float("{:.2f}".format(float(i_row[16]) * 100 / 4)))
+            self.data[self.cpu_3].append(float("{:.2f}".format(float(i_row[17]) * 100 / 4)))
+
+            self.data[self.disk_node_mb].append(float("{:.2f}".format(float(i_row[18]))))
+            self.data[self.disk_node_prcnt].append(float("{:.2f}".format(float(i_row[19]))))
+
+            self.data[self.io_write_mb_s].append(float("{:.2f}".format(float(i_row[20]))))
+            self.data[self.io_read_mb_s].append(float("{:.2f}".format(float(i_row[21]))))
+            self.data[self.io_write_op_s].append(float("{:.2f}".format(float(i_row[22]))))
+            self.data[self.io_read_op_s].append(float("{:.2f}".format(float(i_row[23]))))
+            self.data[self.io_write_prcnt].append(float("{:.2f}".format(float(i_row[24]))))
+            self.data[self.io_read_prcnt].append(float("{:.2f}".format(float(i_row[25]))))
+
+            self.data[self.net_sent_mb_s].append(float("{:.2f}".format(float(i_row[26]))))
+            self.data[self.net_received_mb_s].append(float("{:.2f}".format(float(i_row[27]))))
+            self.data[self.net_sent_pkg_s].append(float("{:.2f}".format(float(i_row[28]))))
+            self.data[self.net_received_pkg_s].append(float("{:.2f}".format(float(i_row[29]))))
+
+            self.data[self.tcp].append(float("{:.2f}".format(float(i_row[30]))))
+
+            if "kiln" in self.name:
+                self.data[self.rewards].append(float("{:.2f}".format(float(i_row[31]))))
+            
+            
         
     
 # checks if the specified name exists in an array of ClientData objects
@@ -252,16 +301,49 @@ def import_from_file(i_file, client_object_array):
             client_object_array[client_index].add_row(row)
 
 PlotMetadata = {
-    'disk': {'legend': "disk", 'graphTitle': "Disk_Usage", 'yLabel': "Disk Usage in GB", 'data_index': ClientData.diskUsage},
-    'cpu': {'legend': "cpu", 'graphTitle': "CPU_Usage", 'yLabel': "CPU %", 'data_index': ClientData.cpuUsage},
-    'mem': {'legend': "mem", 'graphTitle': "MEM_Usage", 'yLabel': "Memory [MB]", 'data_index': ClientData.memUsage},
-    'netSent': {'legend': "Net Sent", 'graphTitle': "Network Sent", 'yLabel': "Net Sent [GB]", 'data_index': ClientData.netSent},
-    'netReceived': {'legend': "Net Received", 'graphTitle': "Network Received", 'yLabel': "Net Received [GB]", 'data_index': ClientData.netReceived},
-    'slot': {'legend': "slot", 'graphTitle': "Slot", 'yLabel': "Slot Number", 'data_index': ClientData.currentSlot},
-    'peers': {'legend': "peers", 'graphTitle': "Peers", 'yLabel': "Peer number", 'data_index': ClientData.currentPeers},
-    'netInRatio': {'legend': "Net Received Ratio", 'graphTitle': "Network In Ratio", 'yLabel': "Peer number", 'data_index': ClientData.netInRatio},
-    'netOutRatio': {'legend': "Net Sent Ratio", 'graphTitle': "Network Out Ratio", 'yLabel': "Peer number", 'data_index': ClientData.netOutRatio},
-    'netOutRatio': {'legend': "Rewards", 'graphTitle': "Rewards per Epoch", 'yLabel': "Gwei", 'data_index': ClientData.rewards},
+    'disk': {'legend': "disk", 'graphTitle': "Disk_Usage", 'yLabel': "Disk Usage in GB", 'data_index': ClientData.disk_usage},
+    'cpu': {'legend': "cpu", 'graphTitle': "CPU_Usage", 'yLabel': "CPU %", 'data_index': ClientData.cpu_usage},
+    'mem': {'legend': "mem", 'graphTitle': "MEM_Usage", 'yLabel': "Memory [MB]", 'data_index': ClientData.mem_usage},
+    'netSent': {'legend': "Net Sent", 'graphTitle': "Network Sent", 'yLabel': "Net Sent [GB]", 'data_index': ClientData.net_sent},
+    'netReceived': {'legend': "Net Received", 'graphTitle': "Network Received", 'yLabel': "Net Received [GB]", 'data_index': ClientData.net_received},
+    'slot': {'legend': "slot", 'graphTitle': "Slot", 'yLabel': "Slot Number", 'data_index': ClientData.current_slot},
+    'peers': {'legend': "peers", 'graphTitle': "Peers", 'yLabel': "Peer number", 'data_index': ClientData.current_peers},
+
+    'memPrcnt': {'legend': "Memory %", 'graphTitle': "Percentage of memory used", 'yLabel': "Mem %", 'data_index': ClientData.mem_percentage},
+
+    'cpu60s': {'legend': "cpu 60 seconds", 'graphTitle': "CPU comnsumption with 60 second range", 'yLabel': "CPU %", 'data_index': ClientData.cpu60},
+    'cpu300s': {'legend': "cpu 300 seconds", 'graphTitle': "CPU comnsumption with 300 second range", 'yLabel': "CPU %", 'data_index': ClientData.cpu300},
+    'cpu900s': {'legend': "cpu 900 seconds", 'graphTitle': "CPU comnsumption with 900 second range", 'yLabel': "CPU %", 'data_index': ClientData.cpu900},
+
+    'cpu_0': {'legend': "core 0", 'graphTitle': "Percentage of CPU seconds of core 0", 'yLabel': "CPU %", 'data_index': ClientData.cpu_0},
+    'cpu_1': {'legend': "core 1", 'graphTitle': "Percentage of CPU seconds of core 1", 'yLabel': "CPU %", 'data_index': ClientData.cpu_1},
+    'cpu_2': {'legend': "core 2", 'graphTitle': "Percentage of CPU seconds of core 2", 'yLabel': "CPU %", 'data_index': ClientData.cpu_2},
+    'cpu_3': {'legend': "core 3", 'graphTitle': "Percentage of CPU seconds of core 3", 'yLabel': "CPU %", 'data_index': ClientData.cpu_3},
+
+    'node_disk_usage': {'legend': "disk use", 'graphTitle': "Disk Usage", 'yLabel': "MB", 'data_index': ClientData.disk_node_mb},
+    'node_disk_usage_prcnt': {'legend': "disk use", 'graphTitle': "Disk Usage", 'yLabel': "Disk %", 'data_index': ClientData.disk_node_prcnt},
+
+    'io_write_mb_s': {'legend': "IO Writes MB", 'graphTitle': "Disk Write MB/s", 'yLabel': "MB/s", 'data_index': ClientData.io_write_mb_s},
+    'io_read_mb_s': {'legend': "IO Reads MB", 'graphTitle': "Disk Read MB/s", 'yLabel': "MB/s", 'data_index': ClientData.io_read_mb_s},
+
+    'io_write_op_s': {'legend': "IO Writes Operations", 'graphTitle': "Disk Write Op/s", 'yLabel': "Op/s", 'data_index': ClientData.io_write_op_s},
+    'io_read_op_s': {'legend': "IO Reads Operations", 'graphTitle': "Disk Read Op/s", 'yLabel': "Op/s", 'data_index': ClientData.io_read_op_s},
+
+    'io_write_prcnt': {'legend': "IO Writes Percentage", 'graphTitle': "Disk Write Percentage", 'yLabel': "Bandwidth %", 'data_index': ClientData.io_write_op_s},
+    'io_read_prcnt': {'legend': "IO Reads Percentage", 'graphTitle': "Disk Read Percentage", 'yLabel': "Bandwidth %", 'data_index': ClientData.io_read_op_s},
+    
+    'netSentMBS': {'legend': "Net Sent Ratio", 'graphTitle': "Network Out Ratio", 'yLabel': "MB/s", 'data_index': ClientData.net_sent_mb_s},
+    'netReceivedMBS': {'legend': "Net Received Ratio", 'graphTitle': "Network In Ratio", 'yLabel': "MB/s", 'data_index': ClientData.net_received_mb_s},
+    
+    'netSentPackS': {'legend': "Net Sent Ratio", 'graphTitle': "Network Out Ratio", 'yLabel': "Pkg/s", 'data_index': ClientData.net_sent_pkg_s},
+    'netreceivedPackS': {'legend': "Net Sent Ratio", 'graphTitle': "Network Out Ratio", 'yLabel': "Pkg/s", 'data_index': ClientData.net_received_pkg_s},
+    
+    'tcp': {'legend': "Net Sent Ratio", 'graphTitle': "Network Out Ratio", 'yLabel': "Peer number", 'data_index': ClientData.tcp},
+    'rewards': {'legend': "Rewards", 'graphTitle': "Rewards per Epoch", 'yLabel': "Gwei", 'data_index': ClientData.rewards},
+    
+    'cpu_cores': {'legend': "core", 'graphTitle': "CPU cores", 'yLabel': "Use %", 'data_index': ClientData.cpu_0},
+    'cpu_intervals': {'legend': "interval", 'graphTitle': "CPU Intervals", 'yLabel': "Use %", 'data_index': ClientData.cpu60}
+
 }
 
 """
@@ -392,12 +474,13 @@ class Plot():
         #print(i_client_obj.name, data_indices)
         #print(self.x_array)
         for item in data_indices:
+            #print(item)
             self.plot_data[-1].append(i_client_obj.data[self.data_index][item])
             # in case a second plot
             if self.second_data_index != -1:
                 self.second_plot_data[-1].append(i_client_obj.data[self.second_data_index][item])
 
-        if self.data_index == ClientData.netReceived or self.data_index == ClientData.netSent:
+        if self.data_index == ClientData.net_received or self.data_index == ClientData.net_sent:
             self.plot_data[-1] = readjust_array(self.plot_data[-1])
         self.plot(self.ax, self.x_labels, self.plot_data[-1], i_client_obj.name + " " + self.legend, self.colorChooser.obtain_next_color(i_client_obj.name), self.marker[client_index], self.plotType)
  
@@ -406,7 +489,7 @@ class Plot():
             if self.secondPlotType == "scatter":
                 color = self.colorChooser.obtain_next_color(i_client_obj.name)
             
-            if self.second_data_index == ClientData.netReceived or self.second_data_index == ClientData.netSent:
+            if self.second_data_index == ClientData.net_received or self.second_data_index == ClientData.net_sent:
                 self.second_plot_data[-1] = readjust_array(self.second_plot_data[-1])
             self.plot(self.ax2, self.x_labels, self.second_plot_data[-1], i_client_obj.name + " " + self.second_legend, color, self.marker[client_index], self.secondPlotType)
 
@@ -419,7 +502,7 @@ class Plot():
         self.secondPlotType = str(config_obj.get(self.section, "SECOND_PLOT_TYPE")) 
         
         self.num_of_ticks = int(config_obj.get(self.section, "NUM_OF_POINTS")) 
-        #self.initial_timestamp = datetime.datetime.strptime(config_obj.get(self.section, "INITIAL_DATE"), '%d/%m/%Y %H:%M:%S').timestamp() #print("Initial timestamp: " + str(num_of_ticks))
+        self.initial_timestamp = datetime.datetime.strptime(config_obj.get(self.section, "INITIAL_DATE"), '%d/%m/%Y %H:%M:%S').timestamp() #print("Initial timestamp: " + str(num_of_ticks))
         self.secs_interval = int(config_obj.get(self.section, "INTERVAL_SECS")) 
         
         self.xaxis_mode = str(config_obj.get(self.section, "XAXIS")) 
@@ -456,7 +539,9 @@ class Plot():
         # self.legenLabel = str(config_obj.get(self.section, "LABEL"))
 
         # 0 for DiskUsage, 1 for CPUUsage, 2 for MemUSage
+        self.setMetadata()
 
+    def setMetadata(self):
         self.yLabel = ""
         self.second_yLabel = ""
         self.graphTitle = ""
@@ -491,11 +576,7 @@ class TwoSubPlotsbyMetric(Plot):
 
     def __init__(self, i_config_obj, i_section):
         super().__init__(i_config_obj, i_section)
-        numberPlotsX = 1
-        numberPlotsY = 1
-
-        numberPlotsY = 2
-        self.fig, (self.ax, self.ax2) = plt.subplots(numberPlotsX, numberPlotsY)
+        self.fig, (self.ax, self.ax2) = plt.subplots(2)
         self.ax2.grid(axis='y')
         self.ax2.grid(axis='x')
 
@@ -512,28 +593,28 @@ class TwoSubPlotsbyMetric(Plot):
         self.ax2.set_xlabel(self.ax.get_xlabel(), fontsize=12)
         print(self.ax.get_xlabel())
 
-    # i_x_index = the array from the client obj to use as x (usually seqNumber or timestamp or currentSlot)
-    def add_plot_data(self, i_client_obj, i_x_index, client_index):
+    # # i_x_index = the array from the client obj to use as x (usually seqNumber or timestamp or currentSlot)
+    # def add_plot_data(self, i_client_obj, i_x_index, client_index):
         
-        data_indices = find_nearest_spots(self.x_array, i_client_obj.data[i_x_index])
+    #     data_indices = find_nearest_spots(self.x_array, i_client_obj.data[i_x_index])
 
-        self.plot_data.append([])
-        self.second_plot_data.append([])
-        for item in data_indices:
-            self.plot_data[-1].append(i_client_obj.data[self.data_index][item])
-            # in case a second plot
-            if self.second_data_index != -1:
-                self.second_plot_data[-1].append(i_client_obj.data[self.second_data_index][item])
+    #     self.plot_data.append([])
+    #     self.second_plot_data.append([])
+    #     for item in data_indices:
+    #         self.plot_data[-1].append(i_client_obj.data[self.data_index][item])
+    #         # in case a second plot
+    #         if self.second_data_index != -1:
+    #             self.second_plot_data[-1].append(i_client_obj.data[self.second_data_index][item])
         
-        self.plot(self.ax, self.x_labels, self.plot_data[-1], i_client_obj.name + " " + self.legend, self.colorChooser.obtain_next_color(i_client_obj.name), self.marker[client_index], self.plotType)
+    #     self.plot(self.ax, self.x_labels, self.plot_data[-1], i_client_obj.name + " " + self.legend, self.colorChooser.obtain_next_color(i_client_obj.name), self.marker[client_index], self.plotType)
  
-        if self.second_data_index != -1:
-            color = self.second_colorChooser.obtain_next_color(i_client_obj.name)
-            if self.secondPlotType == "scatter":
-                color = self.colorChooser.obtain_next_color(i_client_obj.name)
+    #     if self.second_data_index != -1:
+    #         color = self.second_colorChooser.obtain_next_color(i_client_obj.name)
+    #         if self.secondPlotType == "scatter":
+    #             color = self.colorChooser.obtain_next_color(i_client_obj.name)
+    #         self.plot(self.ax2, self.x_labels, self.second_plot_data[-1], i_client_obj.name + " " + self.second_legend, color, self.marker[client_index], self.secondPlotType)
 
-            self.plot(self.ax2, self.x_labels, self.second_plot_data[-1], i_client_obj.name + " " + self.second_legend, color, self.marker[client_index], self.secondPlotType)
-
+# one subplot per client
 class SeveralSubPlots(Plot):
     def __init__(self, i_config_obj, i_section):
         super().__init__(i_config_obj, i_section)
@@ -609,8 +690,40 @@ class SeveralSubPlots(Plot):
                 color = self.colorChooser.obtain_next_color(i_client_obj.name)
 
             self.plot(self.ax_array[ax_index], self.x_labels, self.second_plot_data[-1], i_client_obj.name + " " + self.second_legend, color, self.marker[client_index], self.secondPlotType)
+
+# for cpu cores and intervals
+class SeveralMetricsinPlot(OnePlot):
+    
+    def __init__(self, i_config_obj, i_section):
+        super().__init__(i_config_obj, i_section)
+
+    # i_x_index = the array from the client obj to use as x (usually seqNumber or timestamp or currentSlot)
+    def add_plot_data(self, i_client_obj, i_x_index, client_index):
+        
+        data_indices = find_nearest_spots(self.x_array, i_client_obj.data[i_x_index])
+
+        original_metric = self.metricName        
+
+        metrics = ["cpu_0", "cpu_1", "cpu_2", "cpu_3"]
+
+        if self.metricName == "cpu_intervals":
+            metrics = ["cpu60s", "cpu300s", "cpu900s"]
     
 
+        for metric in metrics:
+            self.metricName = metric
+            self.setMetadata()
+            self.plot_data.append([])
+            for item in data_indices:
+                self.plot_data[-1].append(i_client_obj.data[self.data_index][item])
+                # in case a second plot
+
+            if self.data_index == ClientData.net_received or self.data_index == ClientData.net_sent:
+                self.plot_data[-1] = readjust_array(self.plot_data[-1])
+            self.plot(self.ax, self.x_labels, self.plot_data[-1], i_client_obj.name + " " + self.legend, self.colorChooser.obtain_next_color(i_client_obj.name), self.marker[client_index], self.plotType)
+
+        self.metricName = "cpu_intervals"
+        self.setMetadata()
 
 def main():
 
@@ -653,6 +766,8 @@ def main():
             plot_obj = TwoSubPlotsbyMetric(config_obj, section)
         if plot_obj.plotMode == 3:
             plot_obj = SeveralSubPlots(config_obj, section)
+        if plot_obj.metricName == "cpu_cores" or plot_obj.metricName == "cpu_intervals":
+            plot_obj = SeveralMetricsinPlot(config_obj, section)
 
         client_object_subarray = []
         
@@ -670,6 +785,7 @@ def main():
 
                 minimumDate = minimumDate + (plot_obj.start_x * 3600)
 
+                minimumDate = max(minimumDate, plot_obj.initial_timestamp)
                 # calculate the minimum last date
                 maximumDate = min([x.data[ClientData.timestamp][-1] for x in client_object_subarray])
                 if plot_obj.maxX > 0:
@@ -692,27 +808,27 @@ def main():
 
             if plot_obj.xaxis_mode == 'seq':
                 
-                maxValue = min([x.data[ClientData.seqNumber][-1] for x in client_object_subarray])
+                maxValue = min([x.data[ClientData.seq_number][-1] for x in client_object_subarray])
                 if plot_obj.maxX > 0:
                     maxValue = min(plot_obj.maxX, maxValue)
-                minValue = max([x.data[ClientData.seqNumber][0] for x in client_object_subarray])
+                minValue = max([x.data[ClientData.seq_number][0] for x in client_object_subarray])
                 plot_obj.start_x = max(plot_obj.start_x, minValue)
                 plot_obj.calculate_xArray(plot_obj.start_x, maxValue)
                 plot_obj.x_labels = [plot_obj.secs_interval*x/3600 for x in plot_obj.x_array]
 
                 for idx, client in enumerate(client_object_subarray):
-                    plot_obj.add_plot_data(client, ClientData.seqNumber, idx)
+                    plot_obj.add_plot_data(client, ClientData.seq_number, idx)
 
                 plot_obj.setXlabel("Hours")
             
             if plot_obj.xaxis_mode == 'slot':
 
-                maxValue = min([x.data[ClientData.currentSlot][-1] for x in client_object_subarray])
+                maxValue = min([x.data[ClientData.current_slot][-1] for x in client_object_subarray])
                 
                 if plot_obj.maxX > 0:
                     maxValue = min(plot_obj.maxX, maxValue)
                 
-                minValue = max([x.data[ClientData.currentSlot][0] for x in client_object_subarray])
+                minValue = max([x.data[ClientData.current_slot][0] for x in client_object_subarray])
 
                 plot_obj.start_x = max(plot_obj.start_x, minValue)
                 plot_obj.calculate_xArray(plot_obj.start_x, maxValue)
@@ -721,7 +837,7 @@ def main():
                 
                 print("X Range: ", plot_obj.x_labels[0], " - ", plot_obj.x_labels[-1])
                 for idx, client in enumerate(client_object_subarray):
-                    plot_obj.add_plot_data(client, ClientData.currentSlot, idx)
+                    plot_obj.add_plot_data(client, ClientData.current_slot, idx)
 
                     plot_obj.ax.ticklabel_format(axis='x', style='plain', scilimits=(-3, 3), useMathText=True)
 
