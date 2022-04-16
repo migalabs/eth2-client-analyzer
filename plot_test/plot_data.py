@@ -73,7 +73,7 @@ colors = {
     'lighthouse':   ['#3232ff', '#b2b2ff', '#00007f', '#ffbc8f', '#ff791f', '#994812'], # blue
     'teku':         ['#ffa500', '#ffd27f', '#7f5200', '#bacce4', '#7e99bd', '#465569'], # orange
     'nimbus':       ['#008000', '#99cc99', '#004000', '#d9c5b2', '#a08a74', '#50453a'], # green
-    'lodestar':     ['#8c198c', '#cc99cc', '#4c004c', '#9adf7b', '58a835', '#2c541a'], # purple
+    'lodestar':     ['#8c198c', '#cc99cc', '#4c004c', '#9adf7b', '#58a835', '#2c541a'], # purple
     'grandine':     ['#999900', '#cccc7f', '#4c4c00', '#e69da5', '#c82236', '#610510'], # yellow / gold
 }
 
@@ -231,10 +231,10 @@ class ClientData():
             self.data[self.cpu300].append(float("{:.2f}".format(float(i_row[12]))))
             self.data[self.cpu900].append(float("{:.2f}".format(float(i_row[13]))))
 
-            self.data[self.cpu_0].append(float("{:.2f}".format(float(i_row[14]) * 100 / 4)))
-            self.data[self.cpu_1].append(float("{:.2f}".format(float(i_row[15]) * 100 / 4)))
-            self.data[self.cpu_2].append(float("{:.2f}".format(float(i_row[16]) * 100 / 4)))
-            self.data[self.cpu_3].append(float("{:.2f}".format(float(i_row[17]) * 100 / 4)))
+            self.data[self.cpu_0].append(float("{:.2f}".format(float(i_row[14]))))
+            self.data[self.cpu_1].append(float("{:.2f}".format(float(i_row[15]))))
+            self.data[self.cpu_2].append(float("{:.2f}".format(float(i_row[16]))))
+            self.data[self.cpu_3].append(float("{:.2f}".format(float(i_row[17]))))
 
             self.data[self.disk_node_mb].append(float("{:.2f}".format(float(i_row[18]))))
             self.data[self.disk_node_prcnt].append(float("{:.2f}".format(float(i_row[19]))))
@@ -251,10 +251,10 @@ class ClientData():
             self.data[self.net_sent_pkg_s].append(float("{:.2f}".format(float(i_row[28]))))
             self.data[self.net_received_pkg_s].append(float("{:.2f}".format(float(i_row[29]))))
 
-            self.data[self.tcp].append(float("{:.2f}".format(float(i_row[30]))))
+            #self.data[self.tcp].append(float("{:.2f}".format(float(i_row[30]))))
 
             if "kiln" in self.name:
-                self.data[self.rewards].append(float("{:.2f}".format(float(i_row[31]))))
+                self.data[self.rewards].append(float("{:.2f}".format(float(i_row[30]))))
             
             
         
@@ -306,19 +306,19 @@ PlotMetadata = {
     'mem': {'legend': "mem", 'graphTitle': "MEM_Usage", 'yLabel': "Memory [MB]", 'data_index': ClientData.mem_usage},
     'netSent': {'legend': "Net Sent", 'graphTitle': "Network Sent", 'yLabel': "Net Sent [GB]", 'data_index': ClientData.net_sent},
     'netReceived': {'legend': "Net Received", 'graphTitle': "Network Received", 'yLabel': "Net Received [GB]", 'data_index': ClientData.net_received},
-    'slot': {'legend': "slot", 'graphTitle': "Slot", 'yLabel': "Slot Number", 'data_index': ClientData.current_slot},
+    'slot': {'legend': "slot", 'graphTitle': "Slot", 'yLabel': "Slot", 'data_index': ClientData.current_slot},
     'peers': {'legend': "peers", 'graphTitle': "Peers", 'yLabel': "Peer number", 'data_index': ClientData.current_peers},
 
     'memPrcnt': {'legend': "Memory %", 'graphTitle': "Percentage of memory used", 'yLabel': "Mem %", 'data_index': ClientData.mem_percentage},
 
-    'cpu60s': {'legend': "cpu 60 seconds", 'graphTitle': "CPU comnsumption with 60 second range", 'yLabel': "CPU %", 'data_index': ClientData.cpu60},
-    'cpu300s': {'legend': "cpu 300 seconds", 'graphTitle': "CPU comnsumption with 300 second range", 'yLabel': "CPU %", 'data_index': ClientData.cpu300},
-    'cpu900s': {'legend': "cpu 900 seconds", 'graphTitle': "CPU comnsumption with 900 second range", 'yLabel': "CPU %", 'data_index': ClientData.cpu900},
+    'cpu60s': {'legend': "cpu 60 seconds", 'graphTitle': "CPU consumption", 'yLabel': "CPU %", 'data_index': ClientData.cpu60},
+    'cpu300s': {'legend': "cpu 300 seconds", 'graphTitle': "CPU consumption", 'yLabel': "CPU %", 'data_index': ClientData.cpu300},
+    'cpu900s': {'legend': "cpu 900 seconds", 'graphTitle': "CPU consumption", 'yLabel': "CPU %", 'data_index': ClientData.cpu900},
 
-    'cpu_0': {'legend': "core 0", 'graphTitle': "Percentage of CPU seconds of core 0", 'yLabel': "CPU %", 'data_index': ClientData.cpu_0},
-    'cpu_1': {'legend': "core 1", 'graphTitle': "Percentage of CPU seconds of core 1", 'yLabel': "CPU %", 'data_index': ClientData.cpu_1},
-    'cpu_2': {'legend': "core 2", 'graphTitle': "Percentage of CPU seconds of core 2", 'yLabel': "CPU %", 'data_index': ClientData.cpu_2},
-    'cpu_3': {'legend': "core 3", 'graphTitle': "Percentage of CPU seconds of core 3", 'yLabel': "CPU %", 'data_index': ClientData.cpu_3},
+    'cpu_0': {'legend': "core 0", 'graphTitle': "CPU consumption", 'yLabel': "CPU %", 'data_index': ClientData.cpu_0},
+    'cpu_1': {'legend': "core 1", 'graphTitle': "CPU consumption", 'yLabel': "CPU %", 'data_index': ClientData.cpu_1},
+    'cpu_2': {'legend': "core 2", 'graphTitle': "CPU consumption", 'yLabel': "CPU %", 'data_index': ClientData.cpu_2},
+    'cpu_3': {'legend': "core 3", 'graphTitle': "CPU consumption", 'yLabel': "CPU %", 'data_index': ClientData.cpu_3},
 
     'node_disk_usage': {'legend': "disk use", 'graphTitle': "Disk Usage", 'yLabel': "MB", 'data_index': ClientData.disk_node_mb},
     'node_disk_usage_prcnt': {'legend': "disk use", 'graphTitle': "Disk Usage", 'yLabel': "Disk %", 'data_index': ClientData.disk_node_prcnt},
@@ -336,9 +336,9 @@ PlotMetadata = {
     'netReceivedMBS': {'legend': "Net Received Ratio", 'graphTitle': "Network In Ratio", 'yLabel': "MB/s", 'data_index': ClientData.net_received_mb_s},
     
     'netSentPackS': {'legend': "Net Sent Ratio", 'graphTitle': "Network Out Ratio", 'yLabel': "Pkg/s", 'data_index': ClientData.net_sent_pkg_s},
-    'netreceivedPackS': {'legend': "Net Sent Ratio", 'graphTitle': "Network Out Ratio", 'yLabel': "Pkg/s", 'data_index': ClientData.net_received_pkg_s},
+    'netReceivedPackS': {'legend': "Net Received Ratio", 'graphTitle': "Network In Ratio", 'yLabel': "Pkg/s", 'data_index': ClientData.net_received_pkg_s},
     
-    'tcp': {'legend': "Net Sent Ratio", 'graphTitle': "Network Out Ratio", 'yLabel': "Peer number", 'data_index': ClientData.tcp},
+    'tcp': {'legend': "TCP", 'graphTitle': "TCP", 'yLabel': "TCP", 'data_index': ClientData.tcp},
     'rewards': {'legend': "Rewards", 'graphTitle': "Rewards per Epoch", 'yLabel': "Gwei", 'data_index': ClientData.rewards},
     
     'cpu_cores': {'legend': "core", 'graphTitle': "CPU cores", 'yLabel': "Use %", 'data_index': ClientData.cpu_0},
@@ -384,6 +384,15 @@ def readjust_array(i_array):
     return result
 
 
+def do_ratio(i_array, i_interval):
+    result = [0]
+
+    for idx, item in enumerate(i_array[1:]):
+        result.append((item-i_array[idx-1]) / i_interval)
+
+    return result
+
+
 def item_in_array(lookup_value, array):
     for item in array:
         if item == lookup_value:
@@ -409,7 +418,15 @@ class Plot():
     
     def setXlabel(self, input_label):
         self.ax.set_xlabel(input_label, fontsize=12)
+
+        if self.xaxis_mode == "date":
+            start_date = datetime.datetime.utcfromtimestamp(self.x_array[0]).strftime("%d/%m-%H:%M:%S")
+            self.ax.set_xlabel(input_label + " (since " + start_date + ")", fontsize=12)
+
         self.ax.xaxis.set_major_locator(plt.MaxNLocator(MAX_MAJOR_TICKS))
+
+        if self.xaxis_mode == "slot":
+            self.ax.ticklabel_format(axis='x', style='plain', scilimits=(-3, 3), useMathText=True)
 
     def finish_plot(self):
         self.ax.grid(axis='y')
@@ -440,6 +457,7 @@ class Plot():
         plt.tight_layout()
         #self.ax.tick_params(axis="x", which="both", rotation=45)
         #plt.show()
+        print("Saving figure into: ", self.storePath)
         plt.savefig(self.storePath)
 
     def do_legend(self):
@@ -471,8 +489,6 @@ class Plot():
         self.plot_data.append([])
         self.second_plot_data.append([])
         
-        #print(i_client_obj.name, data_indices)
-        #print(self.x_array)
         for item in data_indices:
             #print(item)
             self.plot_data[-1].append(i_client_obj.data[self.data_index][item])
@@ -480,8 +496,13 @@ class Plot():
             if self.second_data_index != -1:
                 self.second_plot_data[-1].append(i_client_obj.data[self.second_data_index][item])
 
-        if self.data_index == ClientData.net_received or self.data_index == ClientData.net_sent:
-            self.plot_data[-1] = readjust_array(self.plot_data[-1])
+        #if self.data_index == ClientData.net_received or self.data_index == ClientData.net_sent:
+        #    self.plot_data[-1] = readjust_array(self.plot_data[-1])
+
+        if self.ratio != "":
+            self.plot_data[-1] = do_ratio(self.plot_data[-1], self.secs_interval)
+            
+
         self.plot(self.ax, self.x_labels, self.plot_data[-1], i_client_obj.name + " " + self.legend, self.colorChooser.obtain_next_color(i_client_obj.name), self.marker[client_index], self.plotType)
  
         if self.second_data_index != -1:
@@ -489,20 +510,41 @@ class Plot():
             if self.secondPlotType == "scatter":
                 color = self.colorChooser.obtain_next_color(i_client_obj.name)
             
-            if self.second_data_index == ClientData.net_received or self.second_data_index == ClientData.net_sent:
-                self.second_plot_data[-1] = readjust_array(self.second_plot_data[-1])
+            # if self.second_data_index == ClientData.net_received or self.second_data_index == ClientData.net_sent:
+            #     self.second_plot_data[-1] = readjust_array(self.second_plot_data[-1])
+            if self.second_ratio != "":
+                self.second_plot_data[-1] = do_ratio(self.second_plot_data[-1], self.secs_interval)
+
             self.plot(self.ax2, self.x_labels, self.second_plot_data[-1], i_client_obj.name + " " + self.second_legend, color, self.marker[client_index], self.secondPlotType)
 
         
     def import_metrics(self, config_obj):
-        self.metricName = str(config_obj.get(self.section, "METRIC_NAME")) 
+
+        self.metricName = str(config_obj.get(self.section, "METRIC_NAME"))
+        if "," in self.metricName:
+            self.metricName = str(config_obj.get(self.section, "METRIC_NAME")).split(",")
+        
+        self.ratio = ""
+        if config_obj.has_option(self.section,"RATIO"):
+            self.ratio = str(config_obj.get(self.section, "RATIO"))
+
         self.plotType = str(config_obj.get(self.section, "PLOT_TYPE")) 
 
         self.second_metricName = str(config_obj.get(self.section, "SECOND_METRIC_NAME"))
+        if "," in self.second_metricName:
+            self.second_metricName = str(config_obj.get(self.section, "SECOND_METRIC_NAME")).split(",")
+
+        self.second_ratio = ""
+        if config_obj.has_option(self.section,"SECOND_RATIO"):
+            self.second_ratio = str(config_obj.get(self.section, "SECOND_RATIO"))
+
         self.secondPlotType = str(config_obj.get(self.section, "SECOND_PLOT_TYPE")) 
         
         self.num_of_ticks = int(config_obj.get(self.section, "NUM_OF_POINTS")) 
-        self.initial_timestamp = datetime.datetime.strptime(config_obj.get(self.section, "INITIAL_DATE"), '%d/%m/%Y %H:%M:%S').timestamp() #print("Initial timestamp: " + str(num_of_ticks))
+
+        self.initial_timestamp = datetime.datetime.strptime("01/01/2022 00:00:00", '%d/%m/%Y %H:%M:%S').timestamp()
+        if config_obj.has_option(self.section,"INITIAL_DATE"):
+            self.initial_timestamp = datetime.datetime.strptime(config_obj.get(self.section, "INITIAL_DATE"), '%d/%m/%Y %H:%M:%S').timestamp() #print("Initial timestamp: " + str(num_of_ticks))
         self.secs_interval = int(config_obj.get(self.section, "INTERVAL_SECS")) 
         
         self.xaxis_mode = str(config_obj.get(self.section, "XAXIS")) 
@@ -534,12 +576,13 @@ class Plot():
 
         self.markerSize = float(0.1)
         if config_obj.has_option(self.section,"MARKER_SIZE"):
-            self.markerSize  = float(config_obj.get(self.section, "MARKER_SIZE"))
+            self.markerSize = float(config_obj.get(self.section, "MARKER_SIZE"))
         
         # self.legenLabel = str(config_obj.get(self.section, "LABEL"))
 
         # 0 for DiskUsage, 1 for CPUUsage, 2 for MemUSage
-        self.setMetadata()
+        if type(self.metricName) != type([]):
+            self.setMetadata()
 
     def setMetadata(self):
         self.yLabel = ""
@@ -547,7 +590,7 @@ class Plot():
         self.graphTitle = ""
         self.data_index = -1
         self.second_data_index =-1
-
+        
         if self.metricName in PlotMetadata:
             self.legend = PlotMetadata[self.metricName]['legend']
             self.graphTitle = PlotMetadata[self.metricName]['graphTitle']
@@ -556,6 +599,10 @@ class Plot():
         else:
             print("Unknown metric type.")
             exit(0)
+        
+        if self.ratio != "":
+            self.yLabel += "/s"
+            self.graphTitle += " Ratio"
         
         if self.second_metricName in PlotMetadata:
             self.second_legend = PlotMetadata[self.second_metricName]['legend']
@@ -586,6 +633,10 @@ class TwoSubPlotsbyMetric(Plot):
 
         self.ax.xaxis.set_major_locator(plt.MaxNLocator(MAX_MAJOR_TICKS))
         self.ax2.xaxis.set_major_locator(plt.MaxNLocator(MAX_MAJOR_TICKS))
+
+        if self.xaxis_mode == "slot":
+            self.ax.ticklabel_format(axis='x', style='plain', scilimits=(-3, 3), useMathText=True)
+            self.ax2.ticklabel_format(axis='x', style='plain', scilimits=(-3, 3), useMathText=True)
     
     def do_legend(self):
         self.ax.legend(loc=self.legendLocation, fontsize= 'small', markerscale=5/self.markerSize)
@@ -631,6 +682,8 @@ class SeveralSubPlots(Plot):
         for ax in self.ax_array:
             ax.set_xlabel(input_label, fontsize=12)
             ax.xaxis.set_major_locator(plt.MaxNLocator(MAX_MAJOR_TICKS))
+            if self.xaxis_mode == "slot":
+                ax.ticklabel_format(axis='x', style='plain', scilimits=(-3, 3), useMathText=True)
     
     def finish_plot(self):
 
@@ -663,7 +716,8 @@ class SeveralSubPlots(Plot):
     def do_legend(self):
         for idx, ax in enumerate(self.ax_array):
             ax.legend(loc=self.legendLocation, fontsize= 'small', markerscale=5/self.markerSize)
-            self.ax2_array[idx].legend(loc=self.legendLocation, fontsize= 'small', markerscale=5/self.markerSize)
+            if self.second_metricName != "":
+                self.ax2_array[idx].legend(loc=self.legendLocation, fontsize= 'small', markerscale=5/self.markerSize)
             #self.ax2.set_xlabel(self.ax.get_xlabel(), fontsize=12)
             #print(self.ax.get_xlabel())
 
@@ -681,15 +735,20 @@ class SeveralSubPlots(Plot):
             # in case a second plot
             if self.second_data_index != -1:
                 self.second_plot_data[-1].append(i_client_obj.data[self.second_data_index][item])
-        
-        self.plot(self.ax_array[ax_index], self.x_labels, self.plot_data[-1], i_client_obj.name + " " + self.legend, self.colorChooser.obtain_next_color(i_client_obj.name), self.marker[client_index], self.plotType)
- 
+        if type(self.ax_array) == type([]):
+            self.plot(self.ax_array[ax_index], self.x_labels, self.plot_data[-1], i_client_obj.name + " " + self.legend, self.colorChooser.obtain_next_color(i_client_obj.name), self.marker[client_index], self.plotType)
+        else:
+            self.plot(self.ax_array, self.x_labels, self.plot_data[-1], i_client_obj.name + " " + self.legend, self.colorChooser.obtain_next_color(i_client_obj.name), self.marker[client_index], self.plotType)
+
         if self.second_data_index != -1:
             color = self.second_colorChooser.obtain_next_color(i_client_obj.name)
             if self.secondPlotType == "scatter":
                 color = self.colorChooser.obtain_next_color(i_client_obj.name)
 
-            self.plot(self.ax_array[ax_index], self.x_labels, self.second_plot_data[-1], i_client_obj.name + " " + self.second_legend, color, self.marker[client_index], self.secondPlotType)
+            if type(self.ax_array) == type([]):
+                self.plot(self.ax2_array[ax_index], self.x_labels, self.plot_data[-1], i_client_obj.name + " " + self.legend, color, self.marker[client_index], self.plotType)
+            else:
+                self.plot(self.ax2_array, self.x_labels, self.plot_data[-1], i_client_obj.name + " " + self.legend, color, self.marker[client_index], self.plotType)
 
 # for cpu cores and intervals
 class SeveralMetricsinPlot(OnePlot):
@@ -704,12 +763,8 @@ class SeveralMetricsinPlot(OnePlot):
 
         original_metric = self.metricName        
 
-        metrics = ["cpu_0", "cpu_1", "cpu_2", "cpu_3"]
-
-        if self.metricName == "cpu_intervals":
-            metrics = ["cpu60s", "cpu300s", "cpu900s"]
+        metrics = self.metricName
     
-
         for metric in metrics:
             self.metricName = metric
             self.setMetadata()
@@ -718,12 +773,85 @@ class SeveralMetricsinPlot(OnePlot):
                 self.plot_data[-1].append(i_client_obj.data[self.data_index][item])
                 # in case a second plot
 
-            if self.data_index == ClientData.net_received or self.data_index == ClientData.net_sent:
-                self.plot_data[-1] = readjust_array(self.plot_data[-1])
+            # if self.data_index == ClientData.net_received or self.data_index == ClientData.net_sent:
+            #     self.plot_data[-1] = readjust_array(self.plot_data[-1])
             self.plot(self.ax, self.x_labels, self.plot_data[-1], i_client_obj.name + " " + self.legend, self.colorChooser.obtain_next_color(i_client_obj.name), self.marker[client_index], self.plotType)
 
-        self.metricName = "cpu_intervals"
-        self.setMetadata()
+        self.metricName = original_metric
+
+        if self.second_metricName != "":
+            original_second_metricName = self.second_metricName
+            second_metrics = self.second_metricName
+            
+            for metric in second_metrics:
+                self.second_metricName = metric
+                self.setMetadata()
+                self.second_plot_data.append([])
+                for item in data_indices:
+                    self.second_plot_data[-1].append(i_client_obj.data[self.second_data_index][item])
+                    # in case a second plot
+
+                # if self.second_data_index == ClientData.net_received or self.second_data_index == ClientData.net_sent:
+                #     self.second_plot_data[-1] = readjust_array(self.second_plot_data[-1])
+                self.plot(self.ax2, self.x_labels, self.second_plot_data[-1], i_client_obj.name + " " + self.legend, self.second_colorChooser.obtain_next_color(i_client_obj.name), self.marker[client_index], self.plotType)
+
+            self.metricName = original_second_metricName
+
+# for cpu cores and intervals
+class SeveralMetricsinTwoSubPlots(TwoSubPlotsbyMetric):
+
+    
+    def add_plot_data(self, i_client_obj, i_x_index, client_index):
+        
+        data_indices = find_nearest_spots(self.x_array, i_client_obj.data[i_x_index])
+
+        original_metric = self.metricName        
+
+        metrics = self.metricName
+    
+        for metric in metrics:
+            self.metricName = metric
+            self.setMetadata()
+            self.plot_data.append([])
+            for item in data_indices:
+                self.plot_data[-1].append(i_client_obj.data[self.data_index][item])
+                # in case a second plot
+
+            # if self.data_index == ClientData.net_received or self.data_index == ClientData.net_sent:
+            #     self.plot_data[-1] = readjust_array(self.plot_data[-1])
+            self.plot(self.ax, self.x_labels, self.plot_data[-1], i_client_obj.name + " " + self.legend, self.colorChooser.obtain_next_color(i_client_obj.name), self.marker[client_index], self.plotType)
+
+        self.metricName = original_metric
+
+        if self.second_metricName != "":
+            original_second_metricName = self.second_metricName
+            second_metrics = self.second_metricName
+            
+            for metric in second_metrics:
+                self.second_metricName = metric
+                self.setMetadata()
+                self.second_plot_data.append([])
+                for item in data_indices:
+                    self.second_plot_data[-1].append(i_client_obj.data[self.second_data_index][item])
+                    # in case a second plot
+
+                # if self.second_data_index == ClientData.net_received or self.second_data_index == ClientData.net_sent:
+                #     self.second_plot_data[-1] = readjust_array(self.second_plot_data[-1])
+                self.plot(self.ax2, self.x_labels, self.second_plot_data[-1], i_client_obj.name + " " + self.legend, self.second_colorChooser.obtain_next_color(i_client_obj.name), self.marker[client_index], self.plotType)
+
+            self.metricName = original_second_metricName
+
+        
+
+
+
+    # def add_plot_data(self, i_client_obj, i_x_index, client_index):
+        
+        
+
+       
+
+
 
 def main():
 
@@ -734,7 +862,7 @@ def main():
 
     # check if file exists and read
     if os.path.isfile(config_file):
-
+        print("Reading config file : ", config_file)
         config_obj.read(config_file)
     else:
         print("Config file not found")
@@ -760,14 +888,16 @@ def main():
         section = section_base_name+str(section_number)
         section_number = section_number + 1
         
-        plot_obj = OnePlot(config_obj, section)
+        plot_obj = OnePlot(config_obj, section) # simple plot, all in one
         print("Plot mode: ", plot_obj.plotMode)
         if plot_obj.plotMode == 2:
-            plot_obj = TwoSubPlotsbyMetric(config_obj, section)
+            plot_obj = TwoSubPlotsbyMetric(config_obj, section) # separate one metric from another in two plots
         if plot_obj.plotMode == 3:
-            plot_obj = SeveralSubPlots(config_obj, section)
-        if plot_obj.metricName == "cpu_cores" or plot_obj.metricName == "cpu_intervals":
-            plot_obj = SeveralMetricsinPlot(config_obj, section)
+            plot_obj = SeveralSubPlots(config_obj, section) # separate each client in a single subplot, with all the configures metrics
+        if type(plot_obj.metricName) == type([]):
+            plot_obj = SeveralMetricsinPlot(config_obj, section) # plot several different metrics together
+            if type(plot_obj.second_metricName) == type([]):
+                plot_obj = SeveralMetricsinTwoSubPlots(config_obj, section) # plot several different metrics together
 
         client_object_subarray = []
         
@@ -792,7 +922,7 @@ def main():
                     maximumDate = min(minimumDate + plot_obj.maxX * 3600, maximumDate)
 
                 plot_obj.calculate_xArray(minimumDate, maximumDate)
-                # plot_obj.x_labels = [datetime.datetime.utcfromtimestamp(x) for x in plot_obj.x_array]
+                
                 print(plot_obj.x_array[0])
                 plot_obj.x_labels = [float((x - plot_obj.x_array[0]) / 3600.0) for x in plot_obj.x_array]
 
@@ -803,8 +933,8 @@ def main():
                 #plot_obj.ax.xaxis.set_major_formatter(majorTicksFormat)
                 plot_obj.ax.tick_params(axis='x', labelsize=8)
                 #plot_obj.fig.autofmt_xdate(rotation=30)
-                #plot_obj.ax.set_xlabel("Date", fontsize=12)
-                plot_obj.ax.set_xlabel("Hours", fontsize=12)
+                plot_obj.setXlabel("Hours")
+
 
             if plot_obj.xaxis_mode == 'seq':
                 
@@ -839,7 +969,7 @@ def main():
                 for idx, client in enumerate(client_object_subarray):
                     plot_obj.add_plot_data(client, ClientData.current_slot, idx)
 
-                    plot_obj.ax.ticklabel_format(axis='x', style='plain', scilimits=(-3, 3), useMathText=True)
+                    #plot_obj.ax.ticklabel_format(axis='x', style='plain', scilimits=(-3, 3), useMathText=True)
 
                 plot_obj.setXlabel("Slot")
 
