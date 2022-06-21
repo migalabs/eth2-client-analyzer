@@ -19,7 +19,7 @@
 
 # # ## disk
 
-python3 plot_data.py configs/kiln/python/config_plot_all_disk.ini data/kiln/sample*.csv
+# python3 plot_data.py configs/kiln/python/config_plot_all_disk.ini data/kiln/sample*.csv
 # python3 plot_data.py configs/kiln/NE/config*.ini data/kiln/NE_*.csv
 
 
@@ -47,6 +47,7 @@ python3 plot_data.py configs/kiln/python/config_plot_all_disk.ini data/kiln/samp
 # python3 plot_data.py configs/kiln/NE/config_plot_all_cpu_cores.ini data/kiln/NE_*.csv
 # python3 plot_data.py configs/kiln/NE/config_plot_all_cpu_intervals.ini data/kiln/NE_*.csv
 # python3 plot_data.py configs/kiln/NE/config_plot_all_mem_prcnt.ini data/kiln/NE_*.csv
+# python3 plot_data.py configs/kiln/NE/config_plot_all_mem.ini data/kiln/NE_*.csv
 # python3 plot_data.py configs/kiln/NE/config_plot_all_disk_mb_s_write.ini data/kiln/NE_*.csv
 # python3 plot_data.py configs/kiln/NE/config_plot_all_disk_mb_s_read.ini data/kiln/NE_*.csv
 # python3 plot_data.py configs/kiln/NE/config_plot_all_disk_op_s_write.ini data/kiln/NE_*.csv
@@ -65,6 +66,7 @@ python3 plot_data.py configs/kiln/python/config_plot_all_disk.ini data/kiln/samp
 # python3 plot_data.py configs/kiln/NE/config_plot_all_incorrect_sources.ini data/kiln/NE_*.csv
 # python3 plot_data.py configs/kiln/NE/config_plot_all_incorrect_heads_prcnt.ini data/kiln/NE_*.csv
 # python3 plot_data.py configs/kiln/NE/config_plot_all_incorrect_sources_prcnt.ini data/kiln/NE_*.csv
+# python3 plot_data.py configs/kiln/NE/config_plot_all_incorrect_*.ini data/kiln/NE_*.csv
 
 
 # v8

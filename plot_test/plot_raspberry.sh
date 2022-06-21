@@ -18,7 +18,7 @@
 # # disk
 
 python3 plot_data.py configs/raspberry/python/config_plot_all_disk.ini data/raspberry/sample*.csv
-# python3 plot_data.py configs/raspberry/NE/config*.ini data/raspberry/NE_*.csv
+python3 plot_data.py configs/raspberry/NE/config*.ini data/raspberry/NE_*.csv
 
 
 # # netReceived

@@ -55,8 +55,10 @@
 
 # python3 plot_data.py configs/mainnet/NE/config_plot_all_cpu_cores.ini data/default_mainnet2/NE_*.csv
 # python3 plot_data.py configs/mainnet/NE/config_plot_all_cpu_cores_altair.ini data/default_mainnet2/NE_*.csv
+# python3 plot_data.py configs/mainnet/NE/config_plot_all_cpu_altair.ini data/default_mainnet2/NE_*.csv
 # python3 plot_data.py configs/mainnet/NE/config_plot_all_cpu_intervals.ini data/default_mainnet2/NE_*.csv
 # python3 plot_data.py configs/mainnet/NE/config_plot_all_mem.ini data/default_mainnet2/NE_*.csv
+# python3 plot_data.py configs/mainnet/NE/config_plot_all_mem_altair.ini data/default_mainnet2/NE_*.csv
 # python3 plot_data.py configs/mainnet/NE/config_plot_all_mem_prcnt_altair.ini data/default_mainnet2/NE_*.csv
 # python3 plot_data.py configs/mainnet/NE/config_plot_all_mem_prcnt.ini data/default_mainnet2/NE_*.csv
 # python3 plot_data.py configs/mainnet/NE/config_plot_all_disk_mb_s_write.ini data/default_mainnet2/NE_*.csv
@@ -65,8 +67,8 @@
 # python3 plot_data.py configs/mainnet/NE/config_plot_all_disk_op_s_read.ini data/default_mainnet2/NE_*.csv
 # python3 plot_data.py configs/mainnet/NE/config_plot_all_netSent_mb_s.ini data/default_mainnet2/NE_*.csv
 # python3 plot_data.py configs/mainnet/NE/config_plot_all_netReceived_mb_s.ini data/default_mainnet2/NE_*.csv
-python3 plot_data.py configs/mainnet/NE/config_plot_all_slot.ini data/default_mainnet2/NE_*.csv
-# python3 plot_data.py configs/mainnet/NE/config_plot_all_slot_s.ini data/default_mainnet2/NE_*.csv
+# python3 plot_data.py configs/mainnet/NE/config_plot_all_slot.ini data/default_mainnet2/NE_*.csv
+python3 plot_data.py configs/mainnet/NE/config_plot_all_slot_s.ini data/default_mainnet2/NE_*.csv
 # python3 plot_data.py configs/mainnet/NE/config_plot_all_slot_s_altair.ini data/default_mainnet2/NE_*.csv
 # python3 plot_data.py configs/mainnet/NE/config_plot_all_netSent_pkg_s.ini data/default_mainnet2/NE_*.csv
 # python3 plot_data.py configs/mainnet/NE/config_plot_all_netReceived_pkg_s.ini data/default_mainnet2/NE_*.csv

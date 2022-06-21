@@ -20,8 +20,8 @@
 
 ## disk
 
-python3 plot_data.py configs/all-topics/python/config_plot_all_disk.ini data/all-topics2/sample*.csv
-python3 plot_data.py configs/all-topics/NE/config*.ini data/all-topics2/NE_*.csv
+# python3 plot_data.py configs/all-topics/python/config_plot_all_disk.ini data/all-topics2/sample*.csv
+# python3 plot_data.py configs/all-topics/NE/config*.ini data/all-topics2/NE_*.csv
 
 
 # # netReceived

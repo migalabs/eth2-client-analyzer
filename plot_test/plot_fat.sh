@@ -52,6 +52,7 @@
 # pari
 # python3 plot_data.py configs/fat_node/NE/config_plot_all_cpu_cores.ini data/fat_node_mainnet/NE_*.csv
 # python3 plot_data.py configs/fat_node/NE/config_plot_all_cpu_cores_altair.ini data/fat_node_mainnet/NE_*.csv
+# python3 plot_data.py configs/fat_node/NE/config_plot_all_cpu_altair.ini data/fat_node_mainnet/NE_*.csv
 # python3 plot_data.py configs/fat_node/NE/config_plot_all_cpu_intervals.ini data/fat_node_mainnet/NE_*.csv
 # python3 plot_data.py configs/fat_node/NE/config_plot_all_mem.ini data/fat_node_mainnet/NE_*.csv
 # python3 plot_data.py configs/fat_node/NE/config_plot_all_mem_prcnt.ini data/fat_node_mainnet/NE_*.csv
@@ -59,8 +60,8 @@
 # python3 plot_data.py configs/fat_node/NE/config_plot_all_disk_mb_s_write.ini data/fat_node_mainnet/NE_*.csv
 # python3 plot_data.py configs/fat_node/NE/config_plot_all_disk_mb_s_read.ini data/fat_node_mainnet/NE_*.csv
 # python3 plot_data.py configs/fat_node/NE/config_plot_all_disk_op_s_write.ini data/fat_node_mainnet/NE_*.csv
-python3 plot_data.py configs/fat_node/NE/config_plot_all_disk_op_s_write_altair.ini data/fat_node_mainnet/NE_*.csv
-# python3 plot_data.py configs/fat_node/NE/config_plot_all_disk_op_s_read.ini data/fat_node_mainnet/NE_*.csv
+# python3 plot_data.py configs/fat_node/NE/config_plot_all_disk_op_s_write_altair.ini data/fat_node_mainnet/NE_*.csv
+python3 plot_data.py configs/fat_node/NE/config_plot_all_disk_op_s_read.ini data/fat_node_mainnet/NE_*.csv
 # python3 plot_data.py configs/fat_node/NE/config_plot_all_netSent_mb_s.ini data/fat_node_mainnet/NE_*.csv
 # python3 plot_data.py configs/fat_node/NE/config_plot_all_netReceived_mb_s.ini data/fat_node_mainnet/NE_*.csv
 # python3 plot_data.py configs/fat_node/NE/config_plot_all_slot.ini data/fat_node_mainnet/NE_*.csv
