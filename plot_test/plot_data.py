@@ -1126,8 +1126,6 @@ def main():
     number_of_args = len(sys.argv)
     data_files = []
     for i in range(argv_count, number_of_args, 1):
-        if "randine" in str(sys.argv[i]):
-            continue
         data_files.append(os.path.join(os.path.abspath(os.path.dirname(__file__)), str(sys.argv[i])))
         print("Importing " + data_files[-1] + "...")
     client_object_array = []
