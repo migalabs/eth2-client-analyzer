@@ -1,6 +1,6 @@
 
-SLEEP_TIME=3840
-TWO_EPOCHS=768
+SLEEP_TIME=3840 # 10 epochs, let each client run
+TWO_EPOCHS=768 # 2 epochs, transition betwee exporting and importing slashing protection
  
 # Prysm
 
