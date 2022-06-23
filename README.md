@@ -1,4 +1,4 @@
-# eth2-client-analyzer
+# eth2-client-analyzer 
 This repository includes the code and configurations to run and analyze the five main clients of Eth2.
 
 Prysm, Lighthouse, Teku, Nimbus and Lodestar can be set and launched from the different shell scripts. 
