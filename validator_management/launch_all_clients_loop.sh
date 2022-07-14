@@ -4,6 +4,7 @@
 
 SLEEP_TIME=3840 # 10 epochs, let each client run
 TWO_EPOCHS=768 # 2 epochs, transition between stopping validators in one client and running them in the next client
+TWO_EPOCHS=1 # now lets try not waiting
 while true
 do
 echo "Sleeping 768 for security..."
