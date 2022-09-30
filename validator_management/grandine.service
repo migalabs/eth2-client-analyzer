@@ -1,0 +1,15 @@
+[Unit]
+Description=Ethereum Grandine client daemon by The Ethereum Foundation
+After=network.target
+
+[Service]
+ExecStart=/home/ethereum/grandine_logs/grandine-0.2.0_beta3_arm64 --eth1-rpc-urls http://localhost:8551/ --network kiln --data-dir /home/ethereum/.grandine --jwt-secret=/etc/ethereum/kiln/jwtsecret --keystore-dir /home/ethereum/.grandine/keys --keystore-password-file /home/ethereum/.grandine/secrets
+WorkingDirectory=/home/ethereum/grandine_logs
+Restart=always
+User=ethereum
+StandardOutput=append:/home/ethereum/grandine_logs/grandine_std.log
+StandardError=append:/home/ethereum/grandine_logs/grandine_err.log
+
+
+[Install]
+WantedBy=multi-user.target

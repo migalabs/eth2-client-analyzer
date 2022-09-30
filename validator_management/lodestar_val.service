@@ -1,0 +1,15 @@
+[Unit]
+Description=Lodestar Setup
+After=network.target
+
+[Service]
+ExecStart=/home/ethereum/lodestar_logs/lodestar/launch_val.sh 
+WorkingDirectory=/home/ethereum/lodestar_logs/lodestar/
+Restart=always
+User=ethereum
+StandardOutput=append:/home/ethereum/lodestar_logs/lodestar_val_std.log
+StandardError=append:/home/ethereum/lodestar_logs/lodestar_val_err.log
+
+
+[Install]
+WantedBy=multi-user.target

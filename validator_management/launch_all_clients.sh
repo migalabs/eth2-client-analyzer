@@ -1,185 +1,205 @@
+#!/bin/bash
 
-SLEEP_TIME=3840
-TWO_EPOCHS=768
- 
+# set -e
+SLEEP_TIME=3840 # 10 epochs, let each client run
+SLEEP_TIME=1500
+# TWO_EPOCHS=768 # 2 epochs, transition between stopping validators in one client and running them in the next client
+TWO_EPOCHS=1500
 # Prysm
 
+echo "Prysm Client"
+
 # Import slashing protection
-validator-kl slashing-protection-history export --datadir=/home/ethereum/.pry-geth/kiln/testnet-pry --slashing-protection-export-dir=/home/ethereum/prysm_logs/prysm_slashing_protection/ | tee -a /home/ethereum/prysm_logs/slashing_protection_export.log
+echo "Prysm: Importing slashing protection..."
+
+# TODO: Import the last slashing protection from the last client executed in the first run
+
+validator-kl slashing-protection-history import --datadir=/home/ethereum/.pry-geth/kiln/testnet-pry --slashing-protection-json-file=/home/ethereum/lodestar_logs/lodestar/kiln/devnets/kiln-data/slashing_protection.json | tee -a /home/ethereum/prysm_logs/import_slashing.log
+
+# Import validators (already done)
 
 # Import validators (already done but simulate we do)
+# echo "Prysm: Importing validators..."
 
-for d in /home/ethereum/kiln_validators/assigned_data_0_249/secrets/*; do
-	final_d=$(basename $d)
-	validator-kl accounts import --keys-dir=/home/ethereum/kiln_validators/assigned_data_0_249/keys/$final_d --account-password-file=$d --wallet-dir /home/ethereum/.pry-geth/kiln/testnet-pry --wallet-password-file=/home/ethereum/prysm_logs/wallet_password.txt | tee -a import_log.txt
-done
-
+# for d in /home/ethereum/kiln_validators/assigned_data_0_249/secrets/*; do
+# 	final_d=$(basename $d)
+# 	validator-kl accounts import --keys-dir=/home/ethereum/kiln_validators/assigned_data_0_249/keys/$final_d --account-password-file=$d --wallet-dir /home/ethereum/.pry-geth/kiln/testnet-pry --wallet-password-file=/home/ethereum/prysm_logs/wallet_password.txt | tee -a import_log.txt
+# done
 
 # Run geth
+echo "Prysm: Running Geth...."
 
-sudo systemctl start geth-pry.service
+# sudo systemctl start geth-pry.service
 
 # Run Prysm Beacon node
-
+echo "Prysm: Running Beacon Node...."
 sudo systemctl start pry-geth-beacon.service
 
-# Run the validator node
-
+# Run the Prysm Validator node
+echo "Prysm: Running the Validator Node..."
 sudo systemctl start pry-geth-validator.service
 
+echo "Prysm: Sleeping to let the client run"
 sleep $SLEEP_TIME
 
 
 # Stop the validator node
-
+echo "Prysm: Stopping the Validator Node..."
 sudo systemctl stop pry-geth-validator.service
 
 # Stop Prysm Beacon node
-
+echo "Prysm: Stopping the Beacon Node..."
 sudo systemctl stop pry-geth-beacon.service
 
 # Stop geth
-
-sudo systemctl stop geth-pry.service
+echo "Prysm: Stopping Geth..."
+# sudo systemctl stop geth-pry.service
 
 
 # Export slashing protection
-
+rm /home/ethereum/prysm_logs/prysm_slashing_protection/*
+echo "Prysm: Exporting Slashing protection..."
 validator-kl slashing-protection-history export --datadir=/home/ethereum/.pry-geth/kiln/testnet-pry --slashing-protection-export-dir=/home/ethereum/prysm_logs/prysm_slashing_protection/ | tee -a /home/ethereum/prysm_logs/slashing_protection_export.log
 
+echo "Prysm: Finished. Stopping for 2 epochs..."
 sleep $TWO_EPOCHS
+
 # ------------------------------------------------------
 
 # Lighthouse
-
+echo "Lighthouse"
 # Import slashing protection
-
-lighthouse-kl --network kiln account validator slashing-protection import ../prysm_logs/prysm_slashing_protection/slashing_protection.json --datadir=/home/ethereum/.lh-geth/kiln/testnet-lh | tee -a import.log
+echo "Lighthouse: Importing Slashing Protection..."
+lighthouse-kl --network kiln account validator slashing-protection import /home/ethereum/prysm_logs/prysm_slashing_protection/slashing_protection.json --datadir=/home/ethereum/.lh-geth/kiln/testnet-lh | tee -a import.log
 
 # Import validators (already done but simulating we do)
-
-for d in /home/ethereum/kiln_validators/assigned_data_0_249/secrets/*; do
-	final_d=$(basename $d)
-        lighthouse-kl --network kiln account validator import --directory /home/ethereum/kiln_validators/assigned_data_0_249/keys/$final_d --datadir=/home/ethereum/.lh-geth/kiln/testnet-lh --password-file $d --reuse-password | tee -a /home/ethereum/lighthouse_logs/import.log
-done
+# echo "Lighthouse: Importing Validators..."
+# for d in /home/ethereum/kiln_validators/assigned_data_0_249/secrets/*; do
+# 	final_d=$(basename $d)
+#         lighthouse-kl --network kiln account validator import --directory /home/ethereum/kiln_validators/assigned_data_0_249/keys/$final_d --datadir=/home/ethereum/.lh-geth/kiln/testnet-lh --password-file $d --reuse-password | tee -a /home/ethereum/lighthouse_logs/import.log
+# done
 
 
 # Run geth
-
-sudo systemctl start geth-lh.service
+echo "Lighthouse: Running Geth..."
+# sudo systemctl start geth-lh.service
 
 # Run Lighthouse Beacon node
-
+echo "Lighthouse: Running the Beacon Node..."
 sudo systemctl start lh-geth-beacon.service
 
 # Run Lighthouse Validator node
-
+echo "Lighthouse: Running the Validator Node"
 sudo systemctl start lh-geth-validator.service
-
+echo "Lighthouse: Sleeping for 10 epochs"
 sleep $SLEEP_TIME
 
 
 # Stop Lighthouse Validator node
-
-sudo systemctl start lh-geth-validator.service
+echo "Lighthouse: Stopping the Validator Node..."
+sudo systemctl stop lh-geth-validator.service
 
 # Stop Lighthosue Beacon node
-
-sudo systemctl start lh-geth-beacon.service
+echo "Lighthouse: Stopping the Beacon Node..."
+sudo systemctl stop lh-geth-beacon.service
 
 # Stop Geth
-
-sudo systemctl start geth-lh.service
+echo "Lighthouse: Stopping Geth..."
+# sudo systemctl stop geth-lh.service
 
 # Export Slashing protection
-
-
-lighthouse-kl account validator slashing-protection export /home/ethereum/lighthouse_logs/lighthouse_slashing_protection.json --datadir=/home/ethereum/.lh-geth/kiln/testnet-lh --network kiln
-
+rm /home/ethereum/lighthouse_logs/lighthouse_slashing_protection.json
+echo "Lighthouse: Exporting Slashing Protection..."
+lighthouse-kl account validator slashing-protection export /home/ethereum/lighthouse_logs/slashing_protection.json --datadir=/home/ethereum/.lh-geth/kiln/testnet-lh --network kiln
+echo "Lighthouse: finished. Sleeping for 2 epochs..."
 sleep $TWO_EPOCHS
 # ------------------------------------------------------------------------------
 
 # Nimbus
 
+echo "Nimbus"
 # Import slashing protection
-
-nimbus_beacon_node-kl slashingdb import /home/ethereum/lighthouse_logs/lighthouse_slashing_protection.json --data-dir=/home/ethereum/.nim-geth/kiln/testnet-nim | tee -a /home/ethereum/nimbus_logs/import.log
+echo "Nimbus: Importing the Slahing Protection..."
+nimbus_beacon_node-kl slashingdb import /home/ethereum/lighthouse_logs/slashing_protection.json --data-dir=/home/ethereum/.nim-geth/kiln/testnet-nim | tee -a /home/ethereum/nimbus_logs/import.log
 
 # Import validators
-
-for d in /home/ethereum/kiln_validators/assigned_data_0_249/secrets/*; do
-	final_d=$(basename $d)
-	# password=`cat $d`
-	# echo "$password"
-	echo "$password" | tee | nimbus_beacon_node-kl deposits import --data-dir=/home/ethereum/.nim-geth/kiln/testnet-nim "/home/ethereum/kiln_validators/assigned_data_0_249/keys/$final_d"
-done
+# echo "Nimbus: Importing Validators..."
+# for d in /home/ethereum/kiln_validators/assigned_data_0_249/secrets/*; do
+# 	final_d=$(basename $d)
+# 	# password=`cat $d`
+# 	# echo "$password"
+#	echo "$password" | tee | nimbus_beacon_node-kl deposits import --data-dir=/home/ethereum/.nim-geth/kiln/testnet-nim "/home/ethereum/kiln_validators/assigned_data_0_249/keys/$final_d"
+# done
 
 
 # Run Geth
-
-sudo systemctl start geth-nim.service
+echo "Nimbus: Running Geth..."
+# sudo systemctl start geth-nim.service
 
 # Run Nimbus
-
+echo "Nimbus: Running the Beacon + Validator Node"
 sudo systemctl start nim-geth.service
 
-
+echo "Nimbus: Leaving it run for 10 epochs..."
 sleep $SLEEP_TIME
 
 
 # Stop Nimbus
-
+echo "Nimbus: Stopping the Beacon + Validator Node..."
 sudo systemctl stop nim-geth.service
 
 # Stop Geth
-
-sudo systemctl stop geth-nim.service
+echo "Nimbus: Stopping Geth..."
+# sudo systemctl stop geth-nim.service
 
 
 # Export Slashing protection
+rm /home/ethereum/nimbus_logs/slashing_db.json
+echo "Nimbus: Exporting Slashing Protection..."
+nimbus_beacon_node-kl slashingdb export /home/ethereum/nimbus_logs/slashing_protection.json --data-dir=/home/ethereum/.nim-geth/kiln/testnet-nim | tee -a /home/ethereum/nimbus_logs/slashing_logs.log
 
-nimbus_beacon_node-kl slashingdb export /home/ethereum/nimbus_logs/slashing_database.json --data-dir=/home/ethereum/.nim-geth/kiln/testnet-nim | tee -a /home/ethereum/nimbus_logs/slashing_logs.log
-
-
+echo "Nimbus: finished. Waiting 2 epochs..."
 sleep $TWO_EPOCHS
 
 # -----------------------------------------------------------------------
 
 # Teku
-
+echo "Teku"
 # Import Slashing protection
-
-teku-kl slashing-protection import --from /home/ethereum/nimbus_logs/slashing_database.json | tee -a /home/ethereum/teku_logs/slashing_import.log
+echo "Teku: Importing Slashing Protection..."
+teku-kl slashing-protection import --from /home/ethereum/nimbus_logs/slashing_protection.json --data-path /home/ethereum/.teku-geth/kiln/datadir-teku | tee -a /home/ethereum/teku_logs/slashing_import.log
 
 # Import validators (already done, already copied keys and secrets)
 
 
 # Run Geth
-
-sudo systemctl start geth-teku.service
+echo "Teku: Running Geth..."
+# sudo systemctl start geth-teku.service
 
 # Run Teku
-
+echo "Teku: Running the Beacon + Validator Node..."
 sudo systemctl start teku-geth.service
 
+echo "Teku: Leaving it run for 10 epochs..."
 sleep $SLEEP_TIME
 
 # Stop Teku
-
+echo "Teku: Stopping Beacon + Validator Node..."
 sudo systemctl stop teku-geth.service
 
 
 # Stop Geth
-
-sudo systemctl stop geth-teku.service
+echo "Teku: Stopping Geth..."
+# sudo systemctl stop geth-teku.service
 
 
 # Export Slashing Protection
+rm /home/ethereum/teku_logs/slashing_db.json
+echo "Teku: Exporting Slashing Protection..."
+teku-kl slashing-protection export --data-path /home/ethereum/.teku-geth/kiln/datadir-teku --to /home/ethereum/teku_logs/slashing_protection.json | tee -a /home/ethereum/teku_logs/slashing.log
 
-teku-kl slashing-protection export --data-path /home/ethereum/.teku-geth/kiln/datadir-teku --to /home/ethereum/teku_logs/slashing_db.json | tee -a /home/ethereum/teku_logs/slashing.log
-
+echo "Teku: finished. Waiting for 2 epochs..."
 sleep $TWO_EPOCHS
-
 
 
 # ----------------------------------------------------------------
@@ -187,23 +207,114 @@ sleep $TWO_EPOCHS
 
 # Grandine
 
+echo "Grandine"
+
+cd /home/ethereum/grandine_logs
+
+# Import Slashing protection
+
+echo "Grandine: Importing slashing protection..."
+
+./grandine-0.2.0_beta3_arm64 --network kiln --data-dir /home/ethereum/.grandine interchange import /home/ethereum/teku_logs/slashing_protection.json | tee -a slashing_import.log
+
+# Import validators (already imported)
+
+# echo "Grandine: Importing validators... (already imported)"
 
 
 # Run Geth
 
-sudo systemctl start geth
+echo "Grandine: Running Geth..."
+
+# sudo systemctl start geth
 
 # Run Grandine
 
+echo "Grandine: Running Client"
+
 sudo systemctl start grandine
+
+echo "Grandine: Letting the client run..."
 
 sleep $SLEEP_TIME
 
 # Stop Grandine
 
+echo "Grandine: Stopping Client..."
+
 sudo systemctl stop grandine
 
 # Stop Geth
 
-sudo systemctl stop geth
+echo "Grandine: Stopping Geth..."
 
+sudo systemctl stop geth
+# (we stop geth as Lodestar will use its own geth docker)
+
+# Export Slashing protection
+
+echo "Exporting Slashing Protection..."
+
+./grandine-0.2.0_beta3_arm64 --network kiln interchange export /home/ethereum/grandine_logs/slashing_protection.json | tee -a slashing_export.log
+sleep $TWO_EPOCHS
+# -----------------------------------------------------------------------------
+
+# Lodestar
+
+echo "Lodestar"
+
+echo "Lodestar: Moving to Lodestar folder..."
+
+cd /home/ethereum/lodestar_logs/lodestar/kiln/devnets
+
+# Run Lodestar Beacon Node
+
+echo "Lodestar: Running whole setup without validators..."
+
+sudo systemctl start lodestar_noval
+
+# Import Slashing protection
+
+echo "Lodestar: Copying slashing db into Lodestar Docker folder..."
+
+cp /home/ethereum//grandine_logs/slashing_protection.json /home/ethereum/lodestar_logs/lodestar/kiln/devnets/kiln-data/
+
+echo "Lodestar: Importing Slashing protection..."
+
+sudo docker run --rm --name kiln-lodestar_val --network host -v /home/ethereum/lodestar_logs/lodestar/kiln/devnets/kiln-data:/data -v /home/ethereum/lodestar_logs/lodestar/kiln/devnets/kiln-data/kiln:/config chainsafe/lodestar:arm64 validator slashing-protection import --network kiln --file /data/slashing_protection.json --rootDir /data/lodestar | tee -a slashing_import.log
+
+# Importing validators (already imported)
+
+# Stopping beacon node
+
+sudo systemctl stop lodestar_noval
+
+# Running whole setup
+
+sudo systemctl start lodestar
+
+echo "Lodestar: Let the client run..."
+
+sleep $SLEEP_TIME
+
+# Stop the Lodestar setup
+
+echo "Lodestar: Stopping whole setup..."
+
+sudo systemctl stop lodestar
+
+# Launch Lodestar without validators
+
+echo "Lodestar: Running without validators..."
+
+sudo systemctl start lodestar_noval
+
+# Export Slashing Protection
+
+echo "Lodestar: Exporting Slashing protection..."
+
+sudo docker run --rm --name kiln-lodestar_val --network host -v /home/ethereum/lodestar_logs/lodestar/kiln/devnets/kiln-data:/data -v /home/ethereum/lodestar_logs/lodestar/kiln/devnets/kiln-data/kiln:/config chainsafe/lodestar:arm64 validator slashing-protection export --network kiln --file /data/slashing_protection.json --rootDir /data/lodestar | tee -a slashing_import.log
+
+sudo systemctl stop lodestar_noval
+
+sudo systemctl start geth
